@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+#log-search-main {
+    border-top:3px solid #228B22;
+    border-bottom:3px solid #228B22;
+    background-color: #EEEEEE;
+}
+
+#log_search_panel form table tbody tr th {
+    float:right;
+}
+
+#result {
+    z-index:1;
+    position:relative;
+ }
+ #result table thead tr th {
+    background-color: #F5E77F;
+}
+
+.even-row {
+    background-color: #FFFFCC;
+}
+
+#search-log {
+    padding-top: 3px;
+}
+img.thumbnail {
+    width: 60px;
+    height: 45px;
+    text-align: center;
+}
+
+img.dummy {
+    width: 60px;
+    height: 45px;
+}
