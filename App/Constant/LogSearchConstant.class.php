@@ -33,4 +33,19 @@ class LogSearchConstant
     const TITLE_MAX_LENGTH = 26;
     /** 山行タイトル：カットサイズ */
     const TITLE_CUT_SIZE = 29;
+
+    /** ページネーション：1ページの投稿数 */
+    const POSTS_PER_PAGE = 10;
+
+    /** ページネーション：最大表示ページ数 */
+    const PAGE_NATION_MAX_DISPLAY = 10;
+
+    /** ページネーション：ページ前半 */
+    const PAGE_NATION_FRONT_PAGE = 5;
+
+    /** ページネーション：ページの中央 */
+    const PAGE_NATION_MIDDLE_PAGE = 6;
+
+    /** ページネーション：ページの後半 */
+    const PAGE_NATION_BACK_PAGE = 4;
 }

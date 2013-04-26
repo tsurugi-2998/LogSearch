@@ -36,5 +36,7 @@ class SearchModel {
 
     /** 日付タイプ */
     public $dateType;
-    
+
+    /** ページ番号 */
+    public $paged;
 }

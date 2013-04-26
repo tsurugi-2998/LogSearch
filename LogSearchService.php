@@ -13,6 +13,7 @@ require_once WP_PLUGIN_DIR . '/LogSearch/App/Controller/LogSearchController.clas
 
 use App\Controller\InitController;
 use App\Controller\LogSearchController;
+use App\Controller\GetPageController;
 
 add_shortcode('LogSearch','dispatcher');
 
@@ -23,17 +24,14 @@ add_shortcode('LogSearch','dispatcher');
  */
 function dispatcher() {
 
-    $event = $_POST['event'];
-    if(!isset($event)) {
+    if($_POST['event'] == 'LogSearch') {
+        // 山行記録検索
+        $logSearchController = new LogSearchController();
+        $logSearchController->logSearch();
+
+    }  else {
         // 初期化処理
         $initController = new InitController();
         $initController->init();
-        return;
-    } else {
-        /*
-         * 絞り込み表示時の処理
-        */
-        $logSearchController = new LogSearchController();
-        $logSearchController->logSearch();
     }
 }

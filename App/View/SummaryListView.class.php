@@ -13,18 +13,22 @@ use App\Model\SummaryModel;
  * @author Yoshifumi
  *
  */
-class SummaryList
+class SummaryListView
 {
     /**
      * 検索結果一覧を表示する
      *
      * @param SummaryModel $summaryModel
      */
-    public function display($summaryModelList)
+    public function display($summaryModelList, $foundPosts)
     {
         ob_start();
-
 ?>
+<?php if(!isset($summaryModelList)) : ?>
+    <br/><strong>検索結果0件です</strong><br/>
+<?php else : ?>
+    <?php echo '<br/><strong>' . $foundPosts . '件ヒットしました</strong><br/>'; ?>
+<?php endif; ?>
 <div id="result">
 <table id="summary-list">
     <thead>

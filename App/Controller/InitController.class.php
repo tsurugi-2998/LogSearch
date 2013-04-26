@@ -4,12 +4,12 @@ namespace App\Controller;
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Constant/LogSearchConstant.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Helper/LogSearchHelper.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/SearchModel.class.php';
-require_once WP_PLUGIN_DIR . '/LogSearch/App/View/SearchPanel.class.php';
+require_once WP_PLUGIN_DIR . '/LogSearch/App/View/SearchPanelView.class.php';
 
 use App\Constant\LogSearchConstant;
 use App\Helper\LogSearchHelper;
 use App\Model\SearchModel;
-use App\View\SearchPanel;
+use App\View\SearchPanelView;
 
 /**
  * 初期画面表示処理コントローラー
@@ -43,11 +43,12 @@ class InitController
         $searchModel->endDate = date('Y-m-d');
         $searchModel->keywordType = LogSearchConstant::KEYWORD_TYPE_CONTENTS;
         $searchModel->dateType = LogSearchConstant::DATE_TYPE_RUN;
+        $searchModel->paged = '1';
 
         /*
          * 検索条件パネル表示
          */
-        $searchPanel = new SearchPanel();
-        $searchPanel->display($searchModel);
+        $searchPanelView = new SearchPanelView();
+        $searchPanelView->display($searchModel);
     }
 }

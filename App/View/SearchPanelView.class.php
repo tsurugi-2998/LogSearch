@@ -8,16 +8,22 @@ use App\Model\SearchModel;
 /**
  * 検索条件パネル
  */
-class SearchPanel
+class SearchPanelView
 {
 
+    /**
+     * 検索条件パネルを表示する
+     *
+     * @param SearchModel $searchModel
+     */
     public function display(SearchModel $searchModel)
     {
         ob_start();
 ?>
 <div id="log_search_panel">
     <form id="log_search" action="" method="post">
-        <input type="hidden" name="event" value="log_search"/>
+        <input type="hidden" name="event" value="LogSearch"/>
+        <input type="hidden" id="paged" name="paged" value="1" />
         <table id="log-search-main">
             <tbody>
                 <tr>
