@@ -22,6 +22,7 @@ use App\View\PageNationView;
 use \DateTime;
 use \DateInterval;
 use \FirePHP;
+ use \WP_Query;
 
 /**
  * 山行記録検索コントローラー
@@ -31,7 +32,7 @@ use \FirePHP;
  */
 class LogSearchController 
 {
-    private $firephp;
+    protected $firephp;
 
     /**
      * コンストラクタ
@@ -52,22 +53,28 @@ class LogSearchController
             $searchModel = $this->createSearchModel();
 
             // 検索条件作成
-            $args = $this->getCondition($searchModel);
+            $query = $this->getCondition($searchModel);
 
             $this->firephp->group('search condition');
             $this->firephp->log($args);
             $this->firephp->groupEnd();
 
             // 記事検索
-            $posts = query_posts( $args );
+             $wp_query = new WP_Query();
+             $posts = $wp_query->query($query);
+
+            $this->firephp->group('result');
+            $this->firephp->log($posts);
+            $this->firephp->groupEnd();
 
             // 検索結果件数
-            $foundPosts = $GLOBALS['wp_query']->found_posts;
+            $foundPosts = $wp_query->found_posts;
 
             // サマリーリスト作成
             $summaryModelList = $this->getSummaryModelList($posts);
             // ページネーション作成
-            $pageNationModel = $this->getPageNationModel($searchModel->paged);
+            $maxNumPages = $wp_query->max_num_pages;
+            $pageNationModel = $this->getPageNationModel($searchModel->paged, $maxNumPages);
             // クエリをリセット
             wp_reset_query();
 
@@ -104,13 +111,13 @@ class LogSearchController
         $this->firephp->log('createSearchModel start.');
 
         $searchModel = new SearchModel();
-        $searchModel->mounteneeringStyle = htmlspecialchars($_POST['mounteneering_style']);
-        $searchModel->area = htmlspecialchars($_POST['area']);
-        $searchModel->keyword = htmlspecialchars($_POST['keyword']);
-        $searchModel->startDate = htmlspecialchars($_POST['start_date']);
-        $searchModel->endDate = htmlspecialchars($_POST['end_date']);
-        $searchModel->keywordType = htmlspecialchars($_POST['keyword_type']);
-        $searchModel->dateType = htmlspecialchars($_POST['date_type']);
+        $searchModel->mounteneeringStyle = $_POST['mounteneering_style'];
+        $searchModel->area = $_POST['area'];
+        $searchModel->keyword = $_POST['keyword'];
+        $searchModel->startDate = $_POST['start_date'];
+        $searchModel->endDate = $_POST['end_date'];
+        $searchModel->keywordType = $_POST['keyword_type'];
+        $searchModel->dateType = $_POST['date_type'];
         if(!isset($_POST['paged']) || !is_numeric($_POST['paged'])) {
             // ページ数が設定されていない、または、数値でない場合
             $searchModel->paged = 1;
@@ -145,12 +152,11 @@ class LogSearchController
                 'post_type' => 'mounteneering-log',
                 'posts_per_page' => LogSearchConstant::POSTS_PER_PAGE,
         );
-        
 
-        /* 検索条件:期間 */
-        $args += $this->getDateCondition($searchModel);
         /* 検索条件：カテゴリ */
         $args += $this->getCategoryCondition($searchModel);
+        /* 検索条件:期間 */
+        $args += $this->getDateCondition($searchModel);
         /* 検索条件：キーワード*/
         $keywordCondition = $this->getKeywordCondition($searchModel);
         if(isset($args['meta_query']) && isset($keywordCondition['meta_query'])) {
@@ -238,7 +244,6 @@ class LogSearchController
         $to = new DateTime($searchModel->endDate);
         $to->add(new DateInterval('P1D'));
         $toDate = $to->format('Y-m-d');
-        
         /*
          * 期間検索
         */
@@ -261,10 +266,21 @@ class LogSearchController
             );
         
         } else {
-            $this->firephp->log('投稿日検索.');
-            // 投稿日
-            add_filter('posts_where', array($this,'filter_where'));
-            $args['suppress_filters'] = false;
+            // 山行実施日
+            $args['meta_query'] = array(
+                    array(
+                            'key' => 'post_date',
+                            'value' => $fromDate,
+                            'compare' => '>=',
+                            'type'=>'DATE',
+                    ),
+                    array(
+                            'key' => 'post_date',
+                            'value' => $toDate,
+                            'compare' => '<',
+                            'type'=>'DATE',
+                    ),
+            );
         }
         $this->firephp->log('getDateCondition end.');
         return $args;
@@ -373,57 +389,56 @@ class LogSearchController
     protected function getSummaryModelList($posts) {
         $this->firephp->log('getSummaryModelList start.');
         $summaryModelList;
-        if (have_posts()) {
-            $summaryModelList = array();
-            foreach ($posts as $post) {
-                /*
-                 * カスタムフィールドを取得
-                */
-                $customFields = get_post_custom($post->ID);
-                $thumbnail = $customFields['thumbnail'][0];
-                $logger = $customFields['logger'][0];
-                $member = $customFields['member'][0];
-                $startDate = $customFields['start_date'][0];
-                $endDate = $customFields['end_date'][0];
-                /*
-                 * カスタム分類の取得
-                */
-                $logSearchHelper = new LogSearchHelper();
-                $mounteneeringStyleName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_MOUNTENEERING_STYLE, $mounteneering_style);
-                $areaName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_AREA, $area);
-        
-                /*
-                 * 基本的な投稿データの取得
-                */
-                $postDate = substr($post->post_date, 0, 10);
-                $postUrl = $post->guid . $post->post_type . '=' . urlencode($post->post_title);
-                $postTitle = $post->post_title;
-                if(mb_strlen($postTitle) > LogSearchConstant::TITLE_MAX_LENGTH) {
-                    $postTitle = mb_strimwidth($postTitle, 0, LogSearchConstant::TITLE_CUT_SIZE) . '・・・';
-                }
+        $summaryModelList = array();
+        foreach ($posts as $post) {
+            /*
+             * カスタムフィールドを取得
+            */
 
-                /*
-                 * サムネイル画像の取得
-                */
-                $thumbnailUrl = LogSearchHelper::getThumbnailURL($thumbnail);
-                $dummyUrl = null;
-                if(!isset($thumbnailUrl) || $thumbnailUrl == '') {
-                    $dummyUrl = site_url() . LogSearchConstant::DUMMY_GIF;
-                }
-        
-                $summaryModel = new SummaryModel();
-                $summaryModel->mounteneeringStyleName = $mounteneeringStyleName;
-                $summaryModel->areaName = $areaName;
-                $summaryModel->startDate = $startDate;
-                $summaryModel->endDate = $endDate;
-                $summaryModel->logger = $logger;
-                $summaryModel->thumbnailUrl = $thumbnailUrl;
-                $summaryModel->postUrl =$postUrl;
-                $summaryModel->dummyUrl = $dummyUrl;
-                $summaryModel->postTitle = $postTitle;
-                $summaryModel->postDate = $postDate;
-                array_push($summaryModelList, $summaryModel);
+            $customFields = get_post_custom($post->ID);
+            $thumbnail = $customFields['thumbnail'][0];
+            $logger = $customFields['logger'][0];
+            $member = $customFields['member'][0];
+            $startDate = $customFields['start_date'][0];
+            $endDate = $customFields['end_date'][0];
+            /*
+             * カスタム分類の取得
+            */
+            $logSearchHelper = new LogSearchHelper();
+            $mounteneeringStyleName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_MOUNTENEERING_STYLE, $mounteneering_style);
+            $areaName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_AREA, $area);
+
+            /*
+             * 基本的な投稿データの取得
+            */
+            $postDate = substr($post->post_date, 0, 10);
+            $postUrl = $post->guid . $post->post_type . '=' . urlencode($post->post_title);
+            $postTitle = $post->post_title;
+            if(mb_strlen($postTitle) > LogSearchConstant::TITLE_MAX_LENGTH) {
+                $postTitle = mb_strimwidth($postTitle, 0, LogSearchConstant::TITLE_CUT_SIZE) . '・・・';
             }
+
+            /*
+             * サムネイル画像の取得
+            */
+            $thumbnailUrl = LogSearchHelper::getThumbnailURL($thumbnail);
+            $dummyUrl = null;
+            if(!isset($thumbnailUrl) || $thumbnailUrl == '') {
+                $dummyUrl = site_url() . LogSearchConstant::DUMMY_GIF;
+            }
+
+            $summaryModel = new SummaryModel();
+            $summaryModel->mounteneeringStyleName = $mounteneeringStyleName;
+            $summaryModel->areaName = $areaName;
+            $summaryModel->startDate = $startDate;
+            $summaryModel->endDate = $endDate;
+            $summaryModel->logger = $logger;
+            $summaryModel->thumbnailUrl = $thumbnailUrl;
+            $summaryModel->postUrl =$postUrl;
+            $summaryModel->dummyUrl = $dummyUrl;
+            $summaryModel->postTitle = $postTitle;
+            $summaryModel->postDate = $postDate;
+            array_push($summaryModelList, $summaryModel);
         }
         $this->firephp->log('getSummaryModelList end.');
         return $summaryModelList;
@@ -432,12 +447,11 @@ class LogSearchController
     /**
      * ページネーションモデル作成
      */
-    protected function getPageNationModel($paged)
+    protected function getPageNationModel($paged, $maxNumPages)
     {
         $this->firephp->log('getPageNationModel start.');
         $pageNationModel = new PageNationModel();
         $pageNationModel->currentPage = $paged;
-        $maxNumPages = $GLOBALS['wp_query']->max_num_pages;
 
         // 総ページ数が1ページの場合
         if($maxNumPages <= 1)
