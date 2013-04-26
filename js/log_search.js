@@ -73,5 +73,16 @@ function main($userAgent) {
                 });
             }
         );
+
+        // ページネーション
+        $('.page-nation').click(
+            function(){
+                var $this = $(this);
+                var $paged = $this.attr('paged');
+                $('#paged').attr('value', $paged);
+                var $log_search = $('#log_search');
+                $log_search.submit();
+            }
+        );
     });
 }
