@@ -50,13 +50,13 @@ class LogSearchController
         $this->firephp->log('logSearch start.');
         try {
             // POST送信データからSearchModelの取得
-            $searchModel = $this->createSearchModel();
+            $searchModel = new SearchModel();
 
             // 検索条件作成
             $query = $this->getCondition($searchModel);
 
             $this->firephp->group('search condition');
-            $this->firephp->log($args);
+            $this->firephp->log($query);
             $this->firephp->groupEnd();
 
             // 記事検索
@@ -74,7 +74,7 @@ class LogSearchController
             $summaryModelList = $this->getSummaryModelList($posts);
             // ページネーション作成
             $maxNumPages = $wp_query->max_num_pages;
-            $pageNationModel = $this->getPageNationModel($searchModel->paged, $maxNumPages);
+            $pageNationModel = new PageNationModel($searchModel->paged, $maxNumPages);
             // クエリをリセット
             wp_reset_query();
 
@@ -99,44 +99,6 @@ class LogSearchController
              $this->firephp->error($e);
         }
         $this->firephp->log('logSearch end.');
-    }
-
-    /**
-     * SearchModelを生成する.
-     * 
-     * @return \LogSearch\Model\SearchModel
-     */
-    protected function createSearchModel() 
-    {
-        $this->firephp->log('createSearchModel start.');
-
-        $searchModel = new SearchModel();
-        $searchModel->mounteneeringStyle = $_POST['mounteneering_style'];
-        $searchModel->area = $_POST['area'];
-        $searchModel->keyword = $_POST['keyword'];
-        $searchModel->startDate = $_POST['start_date'];
-        $searchModel->endDate = $_POST['end_date'];
-        $searchModel->keywordType = $_POST['keyword_type'];
-        $searchModel->dateType = $_POST['date_type'];
-        if(!isset($_POST['paged']) || !is_numeric($_POST['paged'])) {
-            // ページ数が設定されていない、または、数値でない場合
-            $searchModel->paged = 1;
-        } else {
-            // それ以外は数値をセット
-            $searchModel->paged = intval($_POST['paged']);
-        }
-        
-        /*
-         * カスタム分類を取得
-        */
-        $searchModel->mounteneeringStyleMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_MOUNTENEERING_STYLE);
-        $searchModel->areaMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_AREA);
-        
-        $this->firephp->log($searchModel, 'Created Search Model.');
-
-        $this->firephp->log('createSearchModel end.');
-
-        return $searchModel;
     }
 
     /**
@@ -190,8 +152,8 @@ class LogSearchController
         /*
          * カスタム分類が単数か複数かで引数がまったく違うためフラグ管理する
         */
-        $mounteneeringStyleFlag = $this->isCategorySelected($searchModel->mounteneeringStyle);
-        $areaFlag = $this->isCategorySelected($searchModel->area);
+        $mounteneeringStyleFlag = LogSearchHelper::isCategorySelected($searchModel->mounteneeringStyle);
+        $areaFlag = LogSearchHelper::isCategorySelected($searchModel->area);
 
         // 登山スタイルと山域の両方検索
         if($mounteneeringStyleFlag && $areaFlag) {
@@ -266,7 +228,7 @@ class LogSearchController
             );
         
         } else {
-            // 山行実施日
+            // 投稿日
             $args['meta_query'] = array(
                     array(
                             'key' => 'post_date',
@@ -284,22 +246,6 @@ class LogSearchController
         }
         $this->firephp->log('getDateCondition end.');
         return $args;
-    }
-
-    public function filter_where($args)
-    {
-        $startDate = $_POST['start_date'];
-        $endDate = $_POST['end_date'];
-
-        $to = new DateTime($endDate);
-        $to->add(new DateInterval('P1D'));
-        $toDate = $to->format('Y-m-d');
-
-        $where  = " AND post_date >= '$startDate' ";
-        $where .= " AND post_date < '$toDate' ";
-        $this->firephp->log($where , 'posts_where');
-
-        return $where;
     }
 
     /**
@@ -442,67 +388,5 @@ class LogSearchController
         }
         $this->firephp->log('getSummaryModelList end.');
         return $summaryModelList;
-    }
-
-    /**
-     * ページネーションモデル作成
-     */
-    protected function getPageNationModel($paged, $maxNumPages)
-    {
-        $this->firephp->log('getPageNationModel start.');
-        $pageNationModel = new PageNationModel();
-        $pageNationModel->currentPage = $paged;
-
-        // 総ページ数が1ページの場合
-        if($maxNumPages <= 1)
-        {
-            $this->firephp->log('総ページ数が1ページ.');
-            return $pageNationModel;
-        }
-
-        // 総ページ数が10ページ以下の場合
-        if($maxNumPages < LogSearchConstant::PAGE_NATION_MAX_DISPLAY)
-        {
-            $this->firephp->log('総ページ数が10ページ以下.');
-            $pageNationModel->startPage = 1;
-            $pageNationModel->endPage = $maxNumPages;
-            return $pageNationModel;
-        }
-
-        if($paged <= LogSearchConstant::PAGE_NATION_MIDDLE_PAGE)
-        {
-            $this->firephp->log('現在ページが6ページ以下.');
-            $pageNationModel->startPage = 1;
-            $pageNationModel->endPage = LogSearchConstant::PAGE_NATION_MAX_DISPLAY;
-            return $pageNationModel;
-        } else {
-            $this->firephp->log('現在ページが7ページ以降.');
-            $pageNationModel->startPage = $paged - LogSearchConstant::PAGE_NATION_FRONT_PAGE;
-            $endPage = $paged + LogSearchConstant::PAGE_NATION_BACK_PAGE;
-            if($endPage > $maxNumPages) {
-                $pageNationModel->endPage = $maxNumPages;
-            } else {
-                $pageNationModel->endPage = $endPage;
-            }
-
-            return $pageNationModel;
-        }
-    }
-
-    /**
-     * カテゴリーが選択されているか判定する
-     * @param unknown $category カテゴリ
-     * @return boolean 選択されていたらtrue、そうでなければfalse
-     */
-    protected function isCategorySelected($category)
-    {
-        if(!isset($category)) {
-            return false;
-        }
-        if($category != 'none' && $category != 'all') {
-            return true;
-        } else {
-            return false;
-        }
     }
 }

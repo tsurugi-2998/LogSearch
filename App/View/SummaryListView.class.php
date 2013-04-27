@@ -62,10 +62,10 @@ class SummaryListView
             </td>
             <td>
                 <?php if(isset($summaryModel->dummyUrl)) : ?>
-                    <img src="<?php echo $summaryModel->dummyUrl; ?>" alt="">
+                    <img src="<?php echo htmlspecialchars($summaryModel->dummyUrl); ?>" alt="">
                 <?php else : ?>
                     <a href="<?php echo $summaryModel->postUrl; ?>">
-                        <img class="thumbnail" src="<?php echo $summaryModel->thumbnailUrl; ?>" alt="">
+                        <img class="thumbnail" src="<?php echo htmlspecialchars($summaryModel->thumbnailUrl); ?>" alt="">
                     </a>
                 <?php  endif; ?>
             </td>
@@ -75,7 +75,7 @@ class SummaryListView
             <td>
                 <?php echo htmlspecialchars($summaryModel->postDate); ?>
             </td>
-            <td><img class="dummy" src="<?php echo site_url() . LogSearchConstant::DUMMY_GIF; ?>" alt="" style="background-color: #FFFFFF;"></td>
+            <td><img class="dummy" src="<?php echo htmlspecialchars(site_url() . LogSearchConstant::DUMMY_GIF); ?>" alt="" style="background-color: #FFFFFF;"></td>
         </tr>
 <?php 
         endforeach;

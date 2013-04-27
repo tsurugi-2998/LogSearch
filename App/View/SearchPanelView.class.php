@@ -35,7 +35,7 @@ class SearchPanelView
                             <?php
                                 foreach ($searchModel->mounteneeringStyleMap as $key => $val) : 
                             ?>
-                                <option value="<?php echo $key; ?>" <?php if($searchModel->mounteneeringStyle === $key){ echo 'selected';}?>><?php echo $val; ?></option>
+                                <option value="<?php echo htmlspecialchars($key); ?>" <?php if($searchModel->mounteneeringStyle === $key){ echo 'selected';}?>><?php echo htmlspecialchars($val); ?></option>
                             <?php
                                 endforeach; 
                             ?>
@@ -46,7 +46,7 @@ class SearchPanelView
                             <?php
                                 foreach ($searchModel->areaMap as $key => $val) : 
                             ?>
-                                <option value="<?php echo $key; ?>" <?php if($searchModel->area === $key){ echo 'selected';}?>><?php echo $val; ?></option>
+                                <option value="<?php echo htmlspecialchars($key); ?>" <?php if($searchModel->area === $key){ echo 'selected';}?>><?php echo htmlspecialchars($val); ?></option>
                             <?php
                                 endforeach; 
                             ?>
@@ -55,7 +55,7 @@ class SearchPanelView
                 <tr>
                 <tr>
                     <th>キーワード：</th>
-                    <td><input type="search" id="keyword" name="keyword" size="30" maxlength="30" value="<?php echo $searchModel->keyword; ?>" autocomplete></td>
+                    <td><input type="search" id="keyword" name="keyword" size="30" maxlength="30" value="<?php echo htmlspecialchars($searchModel->keyword); ?>" autocomplete></td>
                     <td>
                         <table>
                             <tbody>
@@ -73,7 +73,7 @@ class SearchPanelView
                 </tr>
                 <tr>
                     <th>期間：</th>
-                    <td><input type="text" name="start_date" id="start_date" value="<?php echo $searchModel->startDate; ?>" size="15" readonly >から<input type="text" name="end_date" id="end_date" value="<?php echo $searchModel->endDate; ?>" size="15" readonly></td>
+                    <td><input type="text" name="start_date" id="start_date" value="<?php echo htmlspecialchars($searchModel->startDate); ?>" size="15" readonly >から<input type="text" name="end_date" id="end_date" value="<?php echo htmlspecialchars($searchModel->endDate); ?>" size="15" readonly></td>
                     <td>
                         <table>
                             <tbody>

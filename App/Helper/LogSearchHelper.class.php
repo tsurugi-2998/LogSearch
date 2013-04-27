@@ -92,4 +92,20 @@ class LogSearchHelper {
         return $thumbnailURL;
     }
 
+    /**
+     * カテゴリーが選択されているか判定する
+     * @param unknown $category カテゴリ
+     * @return boolean 選択されていたらtrue、そうでなければfalse
+     */
+    public static function isCategorySelected($category)
+    {
+        if(!isset($category)) {
+            return false;
+        }
+        if($category != 'none' && $category != 'all') {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
