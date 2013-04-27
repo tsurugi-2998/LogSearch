@@ -22,7 +22,7 @@ use App\View\PageNationView;
 use \DateTime;
 use \DateInterval;
 use \FirePHP;
- use \WP_Query;
+use \WP_Query;
 
 /**
  * 山行記録検索コントローラー
@@ -347,6 +347,7 @@ class LogSearchController
             $member = $customFields['member'][0];
             $startDate = $customFields['start_date'][0];
             $endDate = $customFields['end_date'][0];
+            $postDate = $customFields['post_date'][0];
             /*
              * カスタム分類の取得
             */
@@ -357,7 +358,6 @@ class LogSearchController
             /*
              * 基本的な投稿データの取得
             */
-            $postDate = substr($post->post_date, 0, 10);
             $postUrl = $post->guid . $post->post_type . '=' . urlencode($post->post_title);
             $postTitle = $post->post_title;
             if(mb_strlen($postTitle) > LogSearchConstant::TITLE_MAX_LENGTH) {

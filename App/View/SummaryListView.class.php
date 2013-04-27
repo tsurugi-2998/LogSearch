@@ -24,7 +24,7 @@ class SummaryListView
     {
         ob_start();
 ?>
-<?php if(!isset($summaryModelList)) : ?>
+<?php if(!isset($summaryModelList) || count($summaryModelList) == 0) : ?>
     <br/><strong>検索結果0件です</strong><br/>
 <?php else : ?>
     <?php echo '<br/><strong>' . $foundPosts . '件ヒットしました</strong><br/>'; ?>
