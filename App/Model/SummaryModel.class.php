@@ -37,4 +37,7 @@ class SummaryModel
 
     /** 投稿日 */
     public $postDate;
+
+    /** 一般公開するになってたらtrue */
+    public $isOpen = false;
 }

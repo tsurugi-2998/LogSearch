@@ -3,10 +3,11 @@ namespace App\View;
 
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/SummaryModel.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Constant/LogSearchConstant.class.php';
+require_once ABSPATH . '/FirePHPCore/FirePHP.class.php';
 
 use App\Constant\LogSearchConstant;
 use App\Model\SummaryModel;
-
+use FirePHP;
 /**
  * 検索結果一覧表示
  *
@@ -22,6 +23,7 @@ class SummaryListView
      */
     public function display($summaryModelList, $foundPosts)
     {
+        $firephp = FirePHP::getInstance(true);
         ob_start();
 ?>
 <?php if(!isset($summaryModelList) || count($summaryModelList) == 0) : ?>
@@ -46,8 +48,9 @@ class SummaryListView
     <tbody>
 <?php
         foreach ($summaryModelList as $summaryModel) :
+        $firephp->log($summaryModel, 'Summary Model.');
 ?>
-        <tr>
+        <tr <?php if($summaryModel->isOpen != true){ echo "class=\"close-row\"";}?>>
             <td>
                 <?php echo htmlspecialchars($summaryModel->mounteneeringStyleName); ?>
             </td>
@@ -75,7 +78,7 @@ class SummaryListView
             <td>
                 <?php echo htmlspecialchars($summaryModel->postDate); ?>
             </td>
-            <td><img class="dummy" src="<?php echo htmlspecialchars(site_url() . LogSearchConstant::DUMMY_GIF); ?>" alt="" style="background-color: #FFFFFF;"></td>
+            <td style="background-color: #FFFFFF;"><img class="dummy" src="<?php echo htmlspecialchars(site_url() . LogSearchConstant::DUMMY_GIF); ?>" alt="" style="background-color: #FFFFFF;"></td>
         </tr>
 <?php 
         endforeach;

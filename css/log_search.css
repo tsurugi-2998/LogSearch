@@ -21,6 +21,10 @@
     background-color: #FFFFCC;
 }
 
+.close-row {
+    background-color: #AFEEEE;
+}
+
 #search-log {
     padding-top: 3px;
 }

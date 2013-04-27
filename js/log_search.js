@@ -32,6 +32,9 @@ function main($userAgent) {
         // 一行置きに背景色を変える
         $("table#summary-list tr:even").addClass('even-row');
 
+        // 一般公開していない山行記録の背景色を変える.
+        $('.close-row').removeClass('even-row');
+
         // 画像拡大
         $(".thumbnail").hover(
             function(){

@@ -110,45 +110,51 @@ class LogSearchController
     protected function getCondition(SearchModel $searchModel) {
         $this->firephp->log('getCondition start.');
 
-        $args = array(
+        $query = array(
                 'post_type' => 'mounteneering-log',
                 'posts_per_page' => LogSearchConstant::POSTS_PER_PAGE,
         );
 
         /* 検索条件：カテゴリ */
-        $args += $this->getCategoryCondition($searchModel);
+        $query += $this->getCategoryCondition($searchModel);
         /* 検索条件:期間 */
-        $args += $this->getDateCondition($searchModel);
+        $query += $this->getDateCondition($searchModel);
         /* 検索条件：キーワード*/
         $keywordCondition = $this->getKeywordCondition($searchModel);
-        if(isset($args['meta_query']) && isset($keywordCondition['meta_query'])) {
+        if(isset($query['meta_query']) && isset($keywordCondition['meta_query'])) {
             $this->firephp->log('既にメタクエリが存在する、かつ、キーワード検索条件がメタクエリの場合');
             // 既にメタクエリが存在する、かつ、キーワード検索条件がメタクエリの場合
             foreach ($keywordCondition['meta_query'] as $condition) {
-                array_push($args['meta_query'], $condition);
+                array_push($query['meta_query'], $condition);
             }
         } else {
-            $args += $keywordCondition;
+            $query += $keywordCondition;
         }
         /* 検索条件：ソート */
-        $args += $this->getSortCondition($searchModel);
+        $query += $this->getSortCondition($searchModel);
+        /* アクセス権限 一般公開 */
+        $openCondition = $this->getOpenCondition();
+        foreach ($openCondition['meta_query'] as $condition) {
+            array_push($query['meta_query'], $condition);
+        }
+        array_push($query['meta_query'], $condition);
         /* ページ番号 */
-        $args['paged'] = $searchModel->paged;
+        $query['paged'] = $searchModel->paged;
         $this->firephp->log('getCondition end.');
 
-        return $args;
+        return $query;
     }
 
     /**
      * カスタム分類検索条件をセット
      * 
      * @param $searchModel SearchModel
-     * @param unknown $args
+     * @param unknown $query
      */
     protected function getCategoryCondition(SearchModel $searchModel) 
     {
         $this->firephp->log('getCategoryCondition start.');
-        $args = array();
+        $query = array();
         /*
          * カスタム分類が単数か複数かで引数がまったく違うためフラグ管理する
         */
@@ -170,7 +176,7 @@ class LogSearchController
                     'terms' => array($searchModel->area),
             );
 
-            $args['tax_query'] =
+            $query['tax_query'] =
                  array(
                     'relation' => 'AND',
                     $mounteneeringStyleArray,
@@ -179,26 +185,26 @@ class LogSearchController
             // 登山スタイルのみ
         } else if($mounteneeringStyleFlag) {
             $this->firephp->log('登山スタイルのみ検索');
-            $args['mounteneering_style'] = $searchModel->mounteneeringStyle;
+            $query['mounteneering_style'] = $searchModel->mounteneeringStyle;
             // 山域のみ
         } else if($areaFlag) {
             $this->firephp->log('山域のみ検索');
-            $args['area'] = $searchModel->area;
+            $query['area'] = $searchModel->area;
         }
 
         $this->firephp->log('getCategoryCondition end.');
 
-        return $args;
+        return $query;
     }
 
     /**
      * 期間検索条件をセット
-     * @param unknown $args query_posts関数に渡す引数
+     * @param unknown $query query_posts関数に渡す引数
      */
     protected function getDateCondition(SearchModel $searchModel) 
     {
         $this->firephp->log('getDateCondition start.');
-        $args = array();
+        $query = array();
         /*
          * 検索条件toの計算
         */
@@ -212,7 +218,7 @@ class LogSearchController
         if($searchModel->dateType === LogSearchConstant::DATE_TYPE_RUN) {
             $this->firephp->log('山行実施日検索.');
             // 山行実施日
-            $args['meta_query'] = array(
+            $query['meta_query'] = array(
                     array(
                             'key' => 'start_date',
                             'value' => $fromDate,
@@ -229,7 +235,7 @@ class LogSearchController
         
         } else {
             // 投稿日
-            $args['meta_query'] = array(
+            $query['meta_query'] = array(
                     array(
                             'key' => 'post_date',
                             'value' => $fromDate,
@@ -245,35 +251,35 @@ class LogSearchController
             );
         }
         $this->firephp->log('getDateCondition end.');
-        return $args;
+        return $query;
     }
 
     /**
      * キーワード検索条件
      * 
      * @param unknown $searchModel
-     * @param unknown $args
+     * @param unknown $query
      */
     protected function getKeywordCondition(SearchModel $searchModel)
     {
         $this->firephp->log('getKeywordCondition start.');
-        $args = array();
+        $query = array();
 
         if(!isset($searchModel->keyword) || trim($searchModel->keyword) == '') {
             $this->firephp->log('キーワード入力なし.');
-            return $args;
+            return $query;
         }
 
 
         if($searchModel->keywordType === LogSearchConstant::KEYWORD_TYPE_CONTENTS) {
             $this->firephp->log('本文検索.');
             // 本文検索
-            $args['s'] = $searchModel->keyword;
-            return $args;
+            $query['s'] = $searchModel->keyword;
+            return $query;
         } else if($searchModel->keywordType === LogSearchConstant::KEYWORD_TYPE_MEMBER) {
             $this->firephp->log('メンバー検索.');
             // メンバー
-            $args['meta_query'] = array(
+            $query['meta_query'] = array(
                     array(
                             'key' => 'member',
                             'value' => $searchModel->keyword,
@@ -285,7 +291,7 @@ class LogSearchController
         } else if($searchModel->keywordType === LogSearchConstant::KEYWORD_TYPE_LOGGER) {
             $this->firephp->log('記録者検索.');
             // 記録者
-            $args['meta_query'] = array(
+            $query['meta_query'] = array(
                     array(
                             'key' => 'logger',
                             'value' => $searchModel->keyword,
@@ -295,35 +301,58 @@ class LogSearchController
             );
         }
         $this->firephp->log('getKeywordCondition end.');
-        return $args;
+        return $query;
     }
 
+    /**
+     * ログインしていない場合、一般公開する山行記録のみ取得する.
+     * 
+     * @return multitype:boolean
+     */
+    protected function getOpenCondition()
+    {
+        $query = array();
+        if(!is_user_logged_in())
+        {
+            $this->firephp->log('ログインしていないユーザーなので一般公開記事のみ取得します.');
+            $query['meta_query'] = array(
+                    array(
+                            'key' => 'open',
+                            'value' => 'true',
+                            'compare' => '=',
+                            'type'=>'CHAR',
+                    )
+            );
+        }
+        
+        return $query;
+    }
     /**
      * ソート条件
      * 
      * @param unknown $searchModel
-     * @param unknown $args
+     * @param unknown $query
      */
     protected function getSortCondition(SearchModel $searchModel) 
     {
         $this->firephp->log('getSortCondition start.');
 
-        $args = array();
+        $query = array();
         if($searchModel->dateType === LogSearchConstant::DATE_TYPE_RUN) {
             $this->firephp->log('山行実施日でソート');
             // 山行実施日
-            $args['orderby'] = 'meta_value';
-            $args['meta_key'] = 'start_date';
-            $args['order'] = 'DESC';
+            $query['orderby'] = 'meta_value';
+            $query['meta_key'] = 'start_date';
+            $query['order'] = 'DESC';
         } else {
             $this->firephp->log('投稿日でソート');
             // それ以外は投稿日
-            $args['orderby'] = 'post_date';
-            $args['order'] = 'DESC';
+            $query['orderby'] = 'post_date';
+            $query['order'] = 'DESC';
         }
 
         $this->firephp->log('getSortCondition end.');
-        return $args;
+        return $query;
     }
 
     /**
@@ -342,12 +371,16 @@ class LogSearchController
             */
 
             $customFields = get_post_custom($post->ID);
+            $this->firephp->group('Custom Fields.');
+            $this->firephp->log($customFields);
+            $this->firephp->groupEnd();
             $thumbnail = $customFields['thumbnail'][0];
             $logger = $customFields['logger'][0];
             $member = $customFields['member'][0];
             $startDate = $customFields['start_date'][0];
             $endDate = $customFields['end_date'][0];
             $postDate = $customFields['post_date'][0];
+            $open = $customFields['open'][0];
             /*
              * カスタム分類の取得
             */
@@ -384,6 +417,8 @@ class LogSearchController
             $summaryModel->dummyUrl = $dummyUrl;
             $summaryModel->postTitle = $postTitle;
             $summaryModel->postDate = $postDate;
+            $summaryModel->isOpen = $open == 'true' ? true : false;
+            
             array_push($summaryModelList, $summaryModel);
         }
         $this->firephp->log('getSummaryModelList end.');
