@@ -32,7 +32,7 @@ class SummaryListView
     <?php echo '<br/><strong>' . $foundPosts . '件ヒットしました</strong><br/>'; ?>
 <?php endif; ?>
 <div id="result">
-<table id="summary-list">
+<table id="summary-list" style="width: 100%;">
     <thead>
         <tr>
             <th>登山スタイル</th>
@@ -83,6 +83,16 @@ class SummaryListView
 <?php 
         endforeach;
 ?>
+        <tr style="background-color: #FFFFFF;">
+            <td style="background-color: #FFFFFF;"></td>
+            <td style="background-color: #FFFFFF;"></td>
+            <td style="background-color: #FFFFFF;"></td>
+            <td style="background-color: #FFFFFF;"></td>
+            <td style="background-color: #FFFFFF;"><img class="dummy" src="<?php echo htmlspecialchars(site_url() . LogSearchConstant::DUMMY_GIF); ?>" alt="" style="background-color: #FFFFFF;"></td>
+            <td style="background-color: #FFFFFF;"></td>
+            <td style="background-color: #FFFFFF;"></td>
+            <td style="background-color: #FFFFFF;"><img class="dummy" src="<?php echo htmlspecialchars(site_url() . LogSearchConstant::DUMMY_GIF); ?>" alt="" style="background-color: #FFFFFF;"></td>
+        </tr>
     </tbody>
 </table>
 </div>
