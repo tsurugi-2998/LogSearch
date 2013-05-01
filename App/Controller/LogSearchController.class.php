@@ -90,8 +90,9 @@ class LogSearchController
             $pageNationView = new PageNationView();
             $pageNationView->display($pageNationModel);
             
-            if($searchModel->dateType === LogSearchConstant::DATE_TYPE_POST)
+            if($searchModel->dateType == LogSearchConstant::DATE_TYPE_POST)
             {
+                $this->firephp->error('posts_whereをremoveします.');
                 remove_filter('posts_where', 'filter_where');
             }
 
@@ -235,20 +236,7 @@ class LogSearchController
         
         } else {
             // 投稿日
-            $query['meta_query'] = array(
-                    array(
-                            'key' => 'post_date',
-                            'value' => $fromDate,
-                            'compare' => '>=',
-                            'type'=>'DATE',
-                    ),
-                    array(
-                            'key' => 'post_date',
-                            'value' => $toDate,
-                            'compare' => '<',
-                            'type'=>'DATE',
-                    ),
-            );
+            add_filter('posts_where', array($this, 'filter_where'));
         }
         $this->firephp->log('getDateCondition end.');
         return $query;
@@ -355,6 +343,17 @@ class LogSearchController
         return $query;
     }
 
+    public function filter_where($where = '')
+    {
+        $fromDate = $_POST['start_date'];
+        $to = new DateTime($_POST['end_date']);
+        $to->add(new DateInterval('P1D'));
+        $toDate = $to->format('Y-m-d');
+    
+        $where .= " AND post_date >= '$fromDate'" . " AND post_date <= '$toDate' ";
+        return $where;
+    }
+
     /**
      * 検索結果からサマリーのリストを取得する.
      * 
@@ -379,7 +378,7 @@ class LogSearchController
             $member = $customFields['member'][0];
             $startDate = $customFields['start_date'][0];
             $endDate = $customFields['end_date'][0];
-            $postDate = $customFields['post_date'][0];
+            $postDate = substr($post->post_date, 0, 10);
             $open = $customFields['open'][0];
             /*
              * カスタム分類の取得
