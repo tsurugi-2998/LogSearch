@@ -135,9 +135,15 @@ class LogSearchController
         $query += $this->getSortCondition($searchModel);
         /* アクセス権限 一般公開 */
         $openCondition = $this->getOpenCondition();
-        foreach ($openCondition['meta_query'] as $condition) {
-            array_push($query['meta_query'], $condition);
+        if(isset($query['meta_query'])) 
+        {
+            foreach ($openCondition['meta_query'] as $condition) {
+                array_push($query['meta_query'], $condition);
+            }
+        } else {
+            $query += $openCondition;
         }
+
         array_push($query['meta_query'], $condition);
         /* ページ番号 */
         $query['paged'] = $searchModel->paged;
