@@ -41,6 +41,9 @@ class SummaryModel
     /** 投稿日 */
     public $postDate;
 
+    /** メンバー */
+    public $member;
+
     /** 一般公開するになってたらtrue */
     public $isOpen = false;
 }

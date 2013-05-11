@@ -89,5 +89,7 @@ function main($userAgent) {
         );
 
         $('.content-popover').popover();
+
+        $('.member-popover').popover();
     });
 }

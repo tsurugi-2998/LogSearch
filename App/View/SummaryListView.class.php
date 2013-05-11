@@ -61,7 +61,7 @@ class SummaryListView
                 <?php echo htmlspecialchars($summaryModel->startDate); ?>～<?php echo htmlspecialchars($summaryModel->endDate); ?>
             </td>
             <td>
-                <?php echo htmlspecialchars($summaryModel->logger); ?>
+                <label class="member-popover"  data-title="参加者" data-content="<?php echo htmlspecialchars($summaryModel->member); ?>" data-trigger="hover" ><?php echo htmlspecialchars($summaryModel->logger); ?></label>
             </td>
             <td>
                 <?php if(isset($summaryModel->dummyUrl)) : ?>
