@@ -71,7 +71,7 @@ class LogSearchController
             $foundPosts = $wp_query->found_posts;
 
             // サマリーリスト作成
-            $summaryModelList = $this->getSummaryModelList($posts);
+            $summaryModelList = $this->getSummaryModelList($posts, $searchModel);
             // ページネーション作成
             $maxNumPages = $wp_query->max_num_pages;
             $pagiNationModel = new PagiNationModel($searchModel->paged, $maxNumPages);
@@ -135,7 +135,7 @@ class LogSearchController
         $query += $this->getSortCondition($searchModel);
         /* アクセス権限 一般公開 */
         $openCondition = $this->getOpenCondition();
-        if(isset($query['meta_query'])) 
+        if(isset($query['meta_query']) && isset($openCondition['meta_query'])) 
         {
             foreach ($openCondition['meta_query'] as $condition) {
                 array_push($query['meta_query'], $condition);
@@ -365,7 +365,7 @@ class LogSearchController
      * @param unknown $posts
      * @return multitype:
      */
-    protected function getSummaryModelList($posts) {
+    protected function getSummaryModelList($posts, SearchModel $searchModel) {
         $this->firephp->log('getSummaryModelList start.');
         $summaryModelList;
         $summaryModelList = array();
@@ -389,8 +389,8 @@ class LogSearchController
              * カスタム分類の取得
             */
             $logSearchHelper = new LogSearchHelper();
-            $styleName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_STYLE, $mounteneering_style);
-            $areaName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_AREA, $area);
+            $styleName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_STYLE, $searchModel->style);
+            $areaName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_AREA, $searchModel->area);
 
             /*
              * 基本的な投稿データの取得
