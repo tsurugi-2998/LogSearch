@@ -1,8 +1,10 @@
 <?php
 namespace App\View;
 
+require_once WP_PLUGIN_DIR . '/LogSearch/App/Constant/LogSearchConstant.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/SearchModel.class.php';
 
+use App\Constant\LogSearchConstant;
 use App\Model\SearchModel;
 
 /**
@@ -27,15 +29,15 @@ class SearchPanelView
         <table id="log-search-main">
             <tbody>
                 <tr>
-                    <th>登山スタイル・山域：</th>
+                    <th>形態・山域：</th>
                     <td>
-                        <select name="mounteneering_style">
-                            <option value="none" <?php if($searchModel->mounteneeringStyle === "none"){ echo 'selected';}?>>▼登山スタイル</option>
-                            <option value="all" <?php if($searchModel->mounteneeringStyle === "all"){ echo 'selected';}?>>全て</option>
+                        <select name="<?php echo LogSearchConstant::CATEGORY_STYLE; ?>">
+                            <option value="none" <?php if($searchModel->style === "none"){ echo 'selected';}?>>▼形態</option>
+                            <option value="all" <?php if($searchModel->style === "all"){ echo 'selected';}?>>全て</option>
                             <?php
-                                foreach ($searchModel->mounteneeringStyleMap as $key => $val) : 
+                                foreach ($searchModel->styleMap as $key => $val) : 
                             ?>
-                                <option value="<?php echo htmlspecialchars($key); ?>" <?php if($searchModel->mounteneeringStyle === $key){ echo 'selected';}?>><?php echo htmlspecialchars($val); ?></option>
+                                <option value="<?php echo htmlspecialchars($key); ?>" <?php if($searchModel->style === $key){ echo 'selected';}?>><?php echo htmlspecialchars($val); ?></option>
                             <?php
                                 endforeach; 
                             ?>

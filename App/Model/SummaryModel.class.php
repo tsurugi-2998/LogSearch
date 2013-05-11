@@ -9,7 +9,7 @@ namespace App\Model;
 class SummaryModel
 {
     /** 登山スタイル */
-    public $mounteneeringStyleName;
+    public $styleName;
 
     /** 山域 */
     public $areaName;

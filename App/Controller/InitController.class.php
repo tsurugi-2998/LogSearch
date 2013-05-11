@@ -28,15 +28,15 @@ class InitController
         /*
          * カスタム分類を取得
          */
-        $mounteneeringStyleMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_MOUNTENEERING_STYLE);
+        $styleMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_STYLE);
         $areaMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_AREA);
         /*
          * 検索条件モデル作成
          */
         $searchModel = new SearchModel();
-        $searchModel->mounteneeringStyleMap = $mounteneeringStyleMap;
+        $searchModel->styleMap = $styleMap;
         $searchModel->areaMap = $areaMap;
-        $searchModel->mounteneeringStyle = 'none';
+        $searchModel->style = 'none';
         $searchModel->area = 'none';
         $searchModel->keyword = '';
         $searchModel->startDate = date('Y-m-d', strtotime('-1 month'));

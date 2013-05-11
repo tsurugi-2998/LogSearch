@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: LogSearch
-Plugin URI: http://tsurugi2998.information-travel-site.com/wordpress/
+Plugin URI: http://sanjc-tc.xsrv.jp/site/
 Description: LogSearch is a mounteneering log search plugin.
 Author: 土方　善文
 Version: 0.1.0
-Author URI: http://tsurugi2998.information-travel-site.com/wordpress/
+Author URI: http://sanjc-tc.xsrv.jp/site/
 */
 
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Controller/InitController.class.php';
@@ -24,7 +24,7 @@ add_shortcode('LogSearch','dispatcher');
  */
 function dispatcher() {
 
-    if($_POST['event'] == 'LogSearch') {
+    if(isset($_POST['event']) && $_POST['event'] == 'LogSearch') {
         // 山行記録検索
         $logSearchController = new LogSearchController();
         $logSearchController->logSearch();

@@ -5,20 +5,20 @@ require_once WP_PLUGIN_DIR . '/LogSearch/App/Constant/LogSearchConstant.class.ph
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Helper/LogSearchHelper.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/SearchModel.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/SummaryModel.class.php';
-require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/PageNationModel.class.php';
+require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/PagiNationModel.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/View/SearchPanelView.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/View/SummaryListView.class.php';
-require_once WP_PLUGIN_DIR . '/LogSearch/App/View/PageNationView.class.php';
+require_once WP_PLUGIN_DIR . '/LogSearch/App/View/PagiNationView.class.php';
 require_once ABSPATH . '/FirePHPCore/FirePHP.class.php';
 
 use App\Constant\LogSearchConstant;
 use App\Helper\LogSearchHelper;
 use App\Model\SearchModel;
 use App\Model\SummaryModel;
-use App\Model\PageNationModel;
+use App\Model\PagiNationModel;
 use App\View\SearchPanelView;
 use App\View\SummaryListView;
-use App\View\PageNationView;
+use App\View\PagiNationView;
 use \DateTime;
 use \DateInterval;
 use \FirePHP;
@@ -74,7 +74,7 @@ class LogSearchController
             $summaryModelList = $this->getSummaryModelList($posts);
             // ページネーション作成
             $maxNumPages = $wp_query->max_num_pages;
-            $pageNationModel = new PageNationModel($searchModel->paged, $maxNumPages);
+            $pagiNationModel = new PagiNationModel($searchModel->paged, $maxNumPages);
             // クエリをリセット
             wp_reset_query();
 
@@ -87,12 +87,12 @@ class LogSearchController
             $summaryListView->display($summaryModelList, $foundPosts);
 
             // ページネーションを表示
-            $pageNationView = new PageNationView();
-            $pageNationView->display($pageNationModel);
+            $pagiNationView = new PagiNationView();
+            $pagiNationView->display($pagiNationModel);
             
             if($searchModel->dateType == LogSearchConstant::DATE_TYPE_POST)
             {
-                $this->firephp->error('posts_whereをremoveします.');
+                $this->firephp->log('posts_whereをremoveします.');
                 remove_filter('posts_where', 'filter_where');
             }
 
@@ -112,7 +112,7 @@ class LogSearchController
         $this->firephp->log('getCondition start.');
 
         $query = array(
-                'post_type' => 'mounteneering-log',
+                'post_type' => LogSearchConstant::POST_TYPE_LOGS,
                 'posts_per_page' => LogSearchConstant::POSTS_PER_PAGE,
         );
 
@@ -144,7 +144,6 @@ class LogSearchController
             $query += $openCondition;
         }
 
-        array_push($query['meta_query'], $condition);
         /* ページ番号 */
         $query['paged'] = $searchModel->paged;
         $this->firephp->log('getCondition end.');
@@ -165,16 +164,16 @@ class LogSearchController
         /*
          * カスタム分類が単数か複数かで引数がまったく違うためフラグ管理する
         */
-        $mounteneeringStyleFlag = LogSearchHelper::isCategorySelected($searchModel->mounteneeringStyle);
+        $styleFlag = LogSearchHelper::isCategorySelected($searchModel->style);
         $areaFlag = LogSearchHelper::isCategorySelected($searchModel->area);
 
         // 登山スタイルと山域の両方検索
-        if($mounteneeringStyleFlag && $areaFlag) {
+        if($styleFlag && $areaFlag) {
             $this->firephp->log('登山スタイルと山域の両方検索');
-            $mounteneeringStyleArray = array(
-                    'taxonomy' => 'mounteneering_style',
+            $styleArray = array(
+                    'taxonomy' => LogSearchConstant::CATEGORY_STYLE,
                     'field' => 'slug',
-                    'terms' => array($searchModel->mounteneeringStyle),
+                    'terms' => array($searchModel->style),
             );
         
             $areaArray = array(
@@ -186,13 +185,13 @@ class LogSearchController
             $query['tax_query'] =
                  array(
                     'relation' => 'AND',
-                    $mounteneeringStyleArray,
+                    $styleArray,
                     $areaArray,
                 );
             // 登山スタイルのみ
-        } else if($mounteneeringStyleFlag) {
+        } else if($styleFlag) {
             $this->firephp->log('登山スタイルのみ検索');
-            $query['mounteneering_style'] = $searchModel->mounteneeringStyle;
+            $query[LogSearchConstant::CATEGORY_STYLE] = $searchModel->style;
             // 山域のみ
         } else if($areaFlag) {
             $this->firephp->log('山域のみ検索');
@@ -390,7 +389,7 @@ class LogSearchController
              * カスタム分類の取得
             */
             $logSearchHelper = new LogSearchHelper();
-            $mounteneeringStyleName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_MOUNTENEERING_STYLE, $mounteneering_style);
+            $styleName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_STYLE, $mounteneering_style);
             $areaName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_AREA, $area);
 
             /*
@@ -412,7 +411,7 @@ class LogSearchController
             }
 
             $summaryModel = new SummaryModel();
-            $summaryModel->mounteneeringStyleName = $mounteneeringStyleName;
+            $summaryModel->styleName = $styleName;
             $summaryModel->areaName = $areaName;
             $summaryModel->startDate = $startDate;
             $summaryModel->endDate = $endDate;

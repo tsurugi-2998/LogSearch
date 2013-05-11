@@ -12,7 +12,7 @@ use \FirePHP;
  * @author Yoshifumi
  *
  */
-class PageNationModel {
+class PagiNationModel {
 
     /** 現在ページ */
     public $currentPage = 1;
@@ -32,7 +32,6 @@ class PageNationModel {
     public function __construct($paged, $maxNumPages)
     {
         $firephp = FirePHP::getInstance(true);
-        $firephp->log('getPageNationModel start.');
         $this->currentPage = $paged;
     
         // 総ページ数が1ページの場合

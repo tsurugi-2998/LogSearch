@@ -35,7 +35,7 @@ class SummaryListView
 <table id="summary-list" style="width: 100%;">
     <thead>
         <tr>
-            <th>登山スタイル</th>
+            <th>形態</th>
             <th>山域</th>
             <th>実施日</th>
             <th>記録</th>
@@ -52,7 +52,7 @@ class SummaryListView
 ?>
         <tr <?php if($summaryModel->isOpen != true){ echo "class=\"close-row\"";}?>>
             <td>
-                <?php echo htmlspecialchars($summaryModel->mounteneeringStyleName); ?>
+                <?php echo htmlspecialchars($summaryModel->styleName); ?>
             </td>
             <td>
                 <?php echo htmlspecialchars($summaryModel->areaName); ?>

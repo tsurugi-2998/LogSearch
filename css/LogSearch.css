@@ -38,3 +38,5 @@ img.dummy {
     width: 60px;
     height: 45px;
 }
+
+.ui-datepicker { z-index: 10000 !important; }

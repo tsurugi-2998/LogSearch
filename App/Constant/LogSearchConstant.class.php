@@ -10,10 +10,13 @@ namespace   App\Constant;
 class LogSearchConstant 
 {
     /** 透明画像のファイルパス */
-    const DUMMY_GIF = '/wp-content/uploads/2013/04/dummy.gif';
+    const DUMMY_GIF = '/wp-content/uploads/2013/05/dummy.gif';
 
-    /** カスタム分類：登山スタイル */
-    const CATEGORY_MOUNTENEERING_STYLE = 'mounteneering_style';
+    /** POST TYPE：山行記録 */
+    const POST_TYPE_LOGS = 'logs';
+
+    /** カスタム分類：形態 */
+    const CATEGORY_STYLE = 'style';
     /** カスタム分類：山域 */
     const CATEGORY_AREA = 'area';
 

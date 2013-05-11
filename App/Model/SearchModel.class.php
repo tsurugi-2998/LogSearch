@@ -15,13 +15,13 @@ use App\Helper\LogSearchHelper;
 class SearchModel {
 
     /** カテゴリー：登山スタイル */
-    public $mounteneeringStyleMap;
+    public $styleMap;
     
     /** カテゴリー：山域 */
     public $areaMap;
 
     /** 登山スタイル */
-    public $mounteneeringStyle;
+    public $style;
     
     /** 山域 */
     public $area;
@@ -46,13 +46,34 @@ class SearchModel {
 
     public function __construct()
     {
-        $this->mounteneeringStyle = $_POST['mounteneering_style'];
-        $this->area = $_POST['area'];
-        $this->keyword = $_POST['keyword'];
-        $this->startDate = $_POST['start_date'];
-        $this->endDate = $_POST['end_date'];
-        $this->keywordType = $_POST['keyword_type'];
-        $this->dateType = $_POST['date_type'];
+        if(isset($_POST[LogSearchConstant::CATEGORY_STYLE])) {
+            $this->style = $_POST[LogSearchConstant::CATEGORY_STYLE];
+        }
+
+        if(isset($_POST['area'])){
+            $this->area = $_POST['area'];
+        } 
+
+        if(isset($_POST['keyword'])) {
+            $this->keyword = $_POST['keyword'];
+        }
+
+        if(isset($_POST['start_date'])) {
+            $this->startDate = $_POST['start_date'];
+        }
+
+        if(isset($_POST['end_date'])) {
+            $this->endDate = $_POST['end_date'];
+        }
+
+        if(isset($_POST['keyword_type'])) {
+            $this->keywordType = $_POST['keyword_type'];
+        }
+
+        if(isset($_POST['date_type'])) {
+            $this->dateType = $_POST['date_type'];
+        }
+
         if(!isset($_POST['paged']) || !is_numeric($_POST['paged'])) {
             // ページ数が設定されていない、または、数値でない場合
             $this->paged = 1;
@@ -64,7 +85,7 @@ class SearchModel {
         /*
          * カスタム分類を取得
         */
-        $this->mounteneeringStyleMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_MOUNTENEERING_STYLE);
+        $this->styleMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_STYLE);
         $this->areaMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_AREA);
 
     }
