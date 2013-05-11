@@ -27,11 +27,11 @@ function dispatcher() {
     if(isset($_POST['event']) && $_POST['event'] == 'LogSearch') {
         // 山行記録検索
         $logSearchController = new LogSearchController();
-        $logSearchController->logSearch();
+        $logSearchController->execute();
 
     }  else {
         // 初期化処理
         $initController = new InitController();
-        $initController->init();
+        $initController->execute();
     }
 }

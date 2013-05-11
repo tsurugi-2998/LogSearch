@@ -2,11 +2,13 @@
 namespace App\Controller;
 
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Constant/LogSearchConstant.class.php';
+require_once WP_PLUGIN_DIR . '/LogSearch/App/Controller/LogSearchController.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Helper/LogSearchHelper.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/SearchModel.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/View/SearchPanelView.class.php';
 
 use App\Constant\LogSearchConstant;
+use App\Controller\LogSearchController;
 use App\Helper\LogSearchHelper;
 use App\Model\SearchModel;
 use App\View\SearchPanelView;
@@ -17,38 +19,22 @@ use App\View\SearchPanelView;
  * @author Yoshifumi
  *
  */
-class InitController 
+class InitController extends LogSearchController
 {
 
-    /**
-     * 初期画面表示処理
-     */
-    public function init() 
+    public function execute()
     {
-        /*
-         * カスタム分類を取得
-         */
-        $styleMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_STYLE);
-        $areaMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_AREA);
-        /*
-         * 検索条件モデル作成
-         */
         $searchModel = new SearchModel();
-        $searchModel->styleMap = $styleMap;
-        $searchModel->areaMap = $areaMap;
         $searchModel->style = 'none';
         $searchModel->area = 'none';
         $searchModel->keyword = '';
         $searchModel->startDate = date('Y-m-d', strtotime('-1 month'));
         $searchModel->endDate = date('Y-m-d');
         $searchModel->keywordType = LogSearchConstant::KEYWORD_TYPE_CONTENTS;
-        $searchModel->dateType = LogSearchConstant::DATE_TYPE_RUN;
+        $searchModel->dateType = LogSearchConstant::DATE_TYPE_POST;
         $searchModel->paged = '1';
 
-        /*
-         * 検索条件パネル表示
-         */
-        $searchPanelView = new SearchPanelView();
-        $searchPanelView->display($searchModel);
+        $this->logSearch($searchModel);
     }
+
 }

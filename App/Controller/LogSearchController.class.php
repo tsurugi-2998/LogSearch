@@ -2,7 +2,6 @@
 namespace App\Controller;
 
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Constant/LogSearchConstant.class.php';
-require_once WP_PLUGIN_DIR . '/LogSearch/App/Helper/LogSearchHelper.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/SearchModel.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/SummaryModel.class.php';
 require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/PagiNationModel.class.php';
@@ -34,23 +33,27 @@ class LogSearchController
 {
     protected $firephp;
 
-    /**
-     * コンストラクタ
-     */
     public function __construct() {
         $this->firephp = FirePHP::getInstance(true);
         $this->firephp->registerErrorHandler();
     }
 
+    public function execute()
+    {
+        // POST送信データからSearchModelの取得
+        $searchModel = new SearchModel();
+
+        // 山行記録検索
+        $this->logSearch($searchModel);
+    }
+
     /**
      * 山行記録検索
      */
-    public function logSearch()
+    public function logSearch(SearchModel $searchModel)
     {
         $this->firephp->log('logSearch start.');
         try {
-            // POST送信データからSearchModelの取得
-            $searchModel = new SearchModel();
 
             // 検索条件作成
             $query = $this->getCondition($searchModel);
@@ -75,8 +78,6 @@ class LogSearchController
             // ページネーション作成
             $maxNumPages = $wp_query->max_num_pages;
             $pagiNationModel = new PagiNationModel($searchModel->paged, $maxNumPages);
-            // クエリをリセット
-            wp_reset_query();
 
             // 検索条件パネル表示
             $searchPanelView = new SearchPanelView();
@@ -350,10 +351,26 @@ class LogSearchController
 
     public function filter_where($where = '')
     {
-        $fromDate = $_POST['start_date'];
-        $to = new DateTime($_POST['end_date']);
-        $to->add(new DateInterval('P1D'));
-        $toDate = $to->format('Y-m-d');
+        $fromDate;
+        $toDate;
+
+        if(isset($_POST['start_date']))
+        {
+            $fromDate = $_POST['start_date'];
+        } else {
+            $fromDate = date('Y-m-d', strtotime('-1 month'));
+        }
+        
+        if(isset($_POST['end_date']))
+        {
+            $to = new DateTime($_POST['end_date']);
+            $to->add(new DateInterval('P1D'));
+            $toDate = $to->format('Y-m-d');
+        } else {
+            $toDate = date('Y-m-d');
+        }
+
+
     
         $where .= " AND post_date >= '$fromDate'" . " AND post_date <= '$toDate' ";
         return $where;
