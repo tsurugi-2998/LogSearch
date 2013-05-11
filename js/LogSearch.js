@@ -78,7 +78,7 @@ function main($userAgent) {
         );
 
         // ページネーション
-        $('.page-nation').click(
+        $('.pagi-nation').click(
             function(){
                 var $this = $(this);
                 var $paged = $this.attr('paged');

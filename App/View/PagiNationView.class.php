@@ -30,10 +30,10 @@ class PagiNationView
         <tr>
           <?php if($pagiNationModel->isDisplayForward()) : ?>
             <td>
-                <a class="page-nation" href="javascript:log_search.submit();" paged="<?php echo $pagiNationModel->currentPage-1; ?>">&lt;</a>
+                <a class="pagi-nation" href="javascript:log_search.submit();" paged="<?php echo $pagiNationModel->currentPage-1; ?>">&lt;</a>
             </td>
             <td>
-                <a class="page-nation" href="javascript:log_search.submit();" paged="<?php echo $pagiNationModel->currentPage-1; ?>">前へ</a>
+                <a class="pagi-nation" href="javascript:log_search.submit();" paged="<?php echo $pagiNationModel->currentPage-1; ?>">前へ</a>
             </td>
           <?php endif; ?>
           <?php for($i = $pagiNationModel->startPage; $i <= $pagiNationModel->endPage; $i++ ) : ?>
@@ -41,16 +41,16 @@ class PagiNationView
                     <?php if($i == $pagiNationModel->currentPage) : ?>
                         <?php echo $i; ?>
                     <?php else :?>
-                        <a class="page-nation" href="javascript:log_search.submit();" paged="<?php echo $i; ?>"><?php echo $i; ?></a>
+                        <a class="pagi-nation" href="javascript:log_search.submit();" paged="<?php echo $i; ?>"><?php echo $i; ?></a>
                     <?php endif; ?>
             </td>
           <?php endfor;?>  
           <?php if($pagiNationModel->isDisplayNext()) : ?>
             <td>
-                <a class="page-nation" href="javascript:log_search.submit();" paged="<?php echo $pagiNationModel->currentPage+1; ?>">次へ</a>
+                <a class="pagi-nation" href="javascript:log_search.submit();" paged="<?php echo $pagiNationModel->currentPage+1; ?>">次へ</a>
             </td>
             <td>
-                <a class="page-nation" href="javascript:log_search.submit();" paged="<?php echo $pagiNationModel->currentPage+1; ?>">&gt;</a>
+                <a class="pagi-nation" href="javascript:log_search.submit();" paged="<?php echo $pagiNationModel->currentPage+1; ?>">&gt;</a>
             </td>
           <?php endif; ?>
         </tr>
