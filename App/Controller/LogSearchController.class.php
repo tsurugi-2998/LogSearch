@@ -367,7 +367,7 @@ class LogSearchController
             $to->add(new DateInterval('P1D'));
             $toDate = $to->format('Y-m-d');
         } else {
-            $toDate = date('Y-m-d');
+            $toDate = date('Y-m-d', strtotime('+1 day'));
         }
 
 
