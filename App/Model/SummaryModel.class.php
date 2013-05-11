@@ -35,6 +35,9 @@ class SummaryModel
     /** 記事タイトル */
     public $postTitle;
 
+    /** 内容  */
+    public $content;
+
     /** 投稿日 */
     public $postDate;
 

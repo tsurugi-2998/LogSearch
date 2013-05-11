@@ -73,7 +73,7 @@ class SummaryListView
                 <?php  endif; ?>
             </td>
             <td>
-                <a href="<?php echo $summaryModel->postUrl; ?>"><?php echo htmlspecialchars($summaryModel->postTitle); ?></a>
+                <a class="content-popover" href="<?php echo $summaryModel->postUrl; ?>" data-title="<?php echo htmlspecialchars($summaryModel->postTitle); ?>" data-content="<?php echo htmlspecialchars($summaryModel->content); ?>" data-trigger="hover"><?php echo htmlspecialchars($summaryModel->postTitle); ?></a>
             </td>
             <td>
                 <?php echo htmlspecialchars($summaryModel->postDate); ?>

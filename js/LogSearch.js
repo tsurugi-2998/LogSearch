@@ -87,5 +87,7 @@ function main($userAgent) {
                 $log_search.submit();
             }
         );
+
+        $('.content-popover').popover();
     });
 }

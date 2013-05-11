@@ -51,4 +51,7 @@ class LogSearchConstant
 
     /** ページネーション：ページの後半 */
     const PAGE_NATION_BACK_PAGE = 4;
+
+    /** ポップオーバーに出力する最大文字数 */
+    const CONTENT_MAX_LENGTH = 100;
 }
