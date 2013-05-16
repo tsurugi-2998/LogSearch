@@ -113,7 +113,7 @@ class LogSearchController
         $this->firephp->log('getCondition start.');
 
         $query = array(
-                'post_type' => LogSearchConstant::POST_TYPE_LOGS,
+                'post_type' => LogSearchConstant::POST_TYPE_LOG,
                 'posts_per_page' => LogSearchConstant::POSTS_PER_PAGE,
         );
 

@@ -32,7 +32,7 @@ class SummaryListView
     <?php echo '<br/><strong>' . $foundPosts . '件ヒットしました</strong><br/>'; ?>
 <?php endif; ?>
 <div id="result">
-<table id="summary-list" style="width: 100%;">
+<table id="summary-list">
     <thead>
         <tr>
             <th>形態</th>
@@ -61,7 +61,7 @@ class SummaryListView
                 <?php echo htmlspecialchars($summaryModel->startDate); ?>～<?php echo htmlspecialchars($summaryModel->endDate); ?>
             </td>
             <td>
-                <label class="member-popover"  data-title="参加者" data-content="<?php echo htmlspecialchars($summaryModel->member); ?>" data-trigger="hover" ><?php echo htmlspecialchars($summaryModel->logger); ?></label>
+                <label class="member-popover"  data-title="参加者" data-content="<?php echo htmlspecialchars($summaryModel->member); ?>" data-trigger="hover"><?php echo htmlspecialchars($summaryModel->logger); ?></label>
             </td>
             <td>
                 <?php if(isset($summaryModel->dummyUrl)) : ?>
@@ -72,7 +72,7 @@ class SummaryListView
                     </a>
                 <?php  endif; ?>
             </td>
-            <td>
+            <td class="title">
                 <a class="content-popover" href="<?php echo $summaryModel->postUrl; ?>" data-title="<?php echo htmlspecialchars($summaryModel->postTitle); ?>" data-content="<?php echo htmlspecialchars($summaryModel->content); ?>" data-trigger="hover"><?php echo htmlspecialchars($summaryModel->postTitle); ?></a>
             </td>
             <td>

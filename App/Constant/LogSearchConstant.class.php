@@ -10,10 +10,10 @@ namespace   App\Constant;
 class LogSearchConstant 
 {
     /** 透明画像のファイルパス */
-    const DUMMY_GIF = '/wp-content/uploads/2013/05/dummy.gif';
+    const DUMMY_GIF = '/wp-content/uploads/LogSearch/dummy.gif';
 
     /** POST TYPE：山行記録 */
-    const POST_TYPE_LOGS = 'logs';
+    const POST_TYPE_LOG = 'log';
 
     /** カスタム分類：形態 */
     const CATEGORY_STYLE = 'style';

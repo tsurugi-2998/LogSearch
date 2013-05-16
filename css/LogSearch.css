@@ -1,7 +1,7 @@
 @CHARSET "UTF-8";
 #log-search-main {
-    border-top:3px solid #228B22;
-    border-bottom:3px solid #228B22;
+    border-top:3px solid #517ED6;
+    border-bottom:3px solid #517ED6;
     background-color: #EEEEEE;
 }
 
@@ -15,6 +15,15 @@
  }
  #result table thead tr th {
     background-color: #F5E77F;
+}
+
+#summary-list {
+	width: 100%;
+	text-align: center;
+}
+
+td.title {
+	text-align:left;
 }
 
 .even-row {
