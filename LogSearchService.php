@@ -22,7 +22,7 @@ add_shortcode('LogSearch','dispatcher');
  * 
  * eventの値によって処理を振り分ける.
  */
-function dispatcher() {
+function dispatcher($atts) {
 
     if(isset($_POST['event']) && $_POST['event'] == 'LogSearch') {
         // 山行記録検索

@@ -29,7 +29,7 @@ class SearchPanelView
         <table id="log-search-main">
             <tbody>
                 <tr>
-                    <th>形態・山域：</th>
+                    <th>形態・山域<?php if(is_user_logged_in()){echo '・種別';}?>：</th>
                     <td>
                         <select name="<?php echo LogSearchConstant::CATEGORY_STYLE; ?>">
                             <option value="none" <?php if($searchModel->style === "none"){ echo 'selected';}?>>▼形態</option>
@@ -53,6 +53,19 @@ class SearchPanelView
                                 endforeach; 
                             ?>
                         </select>
+                        <?php if(is_user_logged_in()): ?>
+                        <select name="type">
+                            <option value="none" <?php if($searchModel->type === "none"){ echo 'selected';}?>>▼種別</option>
+                            <option value="all" <?php if($searchModel->type === "all"){ echo 'selected';}?>>全て</option>
+                            <?php
+                                foreach ($searchModel->typeMap as $key => $val) : 
+                            ?>
+                                <option value="<?php echo htmlspecialchars($key); ?>" <?php if($searchModel->type === $key){ echo 'selected';}?>><?php echo htmlspecialchars($val); ?></option>
+                            <?php
+                                endforeach; 
+                            ?>
+                        </select>
+                        <?php endif; ?>
                     </td>
                 <tr>
                 <tr>

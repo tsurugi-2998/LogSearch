@@ -37,6 +37,7 @@ class SummaryListView
         <tr>
             <th>形態</th>
             <th>山域</th>
+            <th>種別</th>
             <th>実施日</th>
             <th>記録</th>
             <th>画像</th>
@@ -58,7 +59,10 @@ class SummaryListView
                 <?php echo htmlspecialchars($summaryModel->areaName); ?>
             </td>
             <td>
-                <?php echo htmlspecialchars($summaryModel->startDate); ?>～<?php echo htmlspecialchars($summaryModel->endDate); ?>
+                <?php echo htmlspecialchars($summaryModel->typeName); ?>
+            </td>
+            <td>
+                <?php echo date('Y年m月', strtotime($summaryModel->startDate)) ?>
             </td>
             <td>
                 <label class="member-popover"  data-title="参加者" data-content="<?php echo htmlspecialchars($summaryModel->member); ?>" data-trigger="hover"><?php echo htmlspecialchars($summaryModel->logger); ?></label>
@@ -73,7 +77,7 @@ class SummaryListView
                 <?php  endif; ?>
             </td>
             <td class="title">
-                <a class="content-popover" href="<?php echo $summaryModel->postUrl; ?>" data-title="<?php echo htmlspecialchars($summaryModel->postTitle); ?>" data-content="<?php echo htmlspecialchars($summaryModel->content); ?>" data-trigger="hover"><?php echo htmlspecialchars($summaryModel->postTitle); ?></a>
+                <a class="content-popover" href="<?php echo $summaryModel->postUrl; ?>" data-title="<?php echo htmlspecialchars($summaryModel->postTitle); ?>" data-content="<?php echo htmlspecialchars($summaryModel->content); ?>" data-trigger="hover" data-placement="top"><?php echo htmlspecialchars($summaryModel->postTitle); ?></a>
             </td>
             <td>
                 <?php echo htmlspecialchars($summaryModel->postDate); ?>

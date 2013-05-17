@@ -167,28 +167,53 @@ class LogSearchController
         */
         $styleFlag = LogSearchHelper::isCategorySelected($searchModel->style);
         $areaFlag = LogSearchHelper::isCategorySelected($searchModel->area);
+        $typeFlag = LogSearchHelper::isCategorySelected($searchModel->type);
 
+        $flags = array(
+                $styleFlag,
+                $areaFlag,
+                $typeFlag
+                );
         // 登山スタイルと山域の両方検索
-        if($styleFlag && $areaFlag) {
-            $this->firephp->log('登山スタイルと山域の両方検索');
-            $styleArray = array(
-                    'taxonomy' => LogSearchConstant::CATEGORY_STYLE,
-                    'field' => 'slug',
-                    'terms' => array($searchModel->style),
-            );
-        
-            $areaArray = array(
-                    'taxonomy' => 'area',
-                    'field' => 'slug',
-                    'terms' => array($searchModel->area),
-            );
+        if($this->isMultiple($flags)) {
+            $this->firephp->log('複数カテゴリ検索');
 
             $query['tax_query'] =
-                 array(
+            array(
                     'relation' => 'AND',
-                    $styleArray,
-                    $areaArray,
+            );
+
+            if($styleFlag)
+            {
+                $styleArray = array(
+                        'taxonomy' => LogSearchConstant::CATEGORY_STYLE,
+                        'field' => 'slug',
+                        'terms' => array($searchModel->style),
                 );
+                array_push($query['tax_query'], $styleArray);
+            }
+
+
+            if($areaFlag)
+            {
+                $areaArray = array(
+                        'taxonomy' => LogSearchConstant::CATEGORY_AREA,
+                        'field' => 'slug',
+                        'terms' => array($searchModel->area),
+                );
+                array_push($query['tax_query'], $areaArray);
+            }
+
+
+            if($typeFlag)
+            {
+                $typeArray = array(
+                        'taxonomy' => LogSearchConstant::CATEGORY_TYPE,
+                        'field' => 'slug',
+                        'terms' => array($searchModel->type),
+                );
+            }
+
             // 登山スタイルのみ
         } else if($styleFlag) {
             $this->firephp->log('登山スタイルのみ検索');
@@ -196,7 +221,10 @@ class LogSearchController
             // 山域のみ
         } else if($areaFlag) {
             $this->firephp->log('山域のみ検索');
-            $query['area'] = $searchModel->area;
+            $query[LogSearchConstant::CATEGORY_AREA] = $searchModel->area;
+        } else if($typeFlag) {
+            $this->firephp->log('種別のみ検索');
+            $query[LogSearchConstant::CATEGORY_TYPE] = $searchModel->type;
         }
 
         $this->firephp->log('getCategoryCondition end.');
@@ -408,6 +436,7 @@ class LogSearchController
             $logSearchHelper = new LogSearchHelper();
             $styleName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_STYLE, $searchModel->style);
             $areaName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_AREA, $searchModel->area);
+            $typeName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_TYPE, $searchModel->type);
 
             /*
              * 基本的な投稿データの取得
@@ -430,6 +459,7 @@ class LogSearchController
             $summaryModel = new SummaryModel();
             $summaryModel->styleName = $styleName;
             $summaryModel->areaName = $areaName;
+            $summaryModel->typeName = $typeName;
             $summaryModel->startDate = $startDate;
             $summaryModel->endDate = $endDate;
             $summaryModel->logger = $logger;
@@ -446,5 +476,25 @@ class LogSearchController
         }
         $this->firephp->log('getSummaryModelList end.');
         return $summaryModelList;
+    }
+
+    private function isMultiple($flags)
+    {
+        $ret = false;
+        $count = 0;
+        foreach ($flags as $flag)
+        {
+            if($flag)
+            {
+                $count++;
+            }
+        }
+        
+        if($count > 1)
+        {
+            $ret = true;
+        }
+        
+        return $ret;
     }
 }

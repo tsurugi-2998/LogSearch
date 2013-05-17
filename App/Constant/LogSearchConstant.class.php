@@ -19,6 +19,8 @@ class LogSearchConstant
     const CATEGORY_STYLE = 'style';
     /** カスタム分類：山域 */
     const CATEGORY_AREA = 'area';
+    /** カスタム分類：種別 */
+    const CATEGORY_TYPE = 'type';
 
     /** キーワードタイプ：本文*/
     const KEYWORD_TYPE_CONTENTS = '1';

@@ -20,11 +20,17 @@ class SearchModel {
     /** カテゴリー：山域 */
     public $areaMap;
 
+    /** カテゴリー：種別 */
+    public $typeMap;
+
     /** 登山スタイル */
     public $style;
     
     /** 山域 */
     public $area;
+
+    /** 種別 */
+    public $type;
 
     /** キーワード */
     public $keyword;
@@ -50,9 +56,13 @@ class SearchModel {
             $this->style = $_POST[LogSearchConstant::CATEGORY_STYLE];
         }
 
-        if(isset($_POST['area'])){
-            $this->area = $_POST['area'];
+        if(isset($_POST[LogSearchConstant::CATEGORY_AREA])){
+            $this->area = $_POST[LogSearchConstant::CATEGORY_AREA];
         } 
+        
+        if(isset($_POST[LogSearchConstant::CATEGORY_TYPE])){
+            $this->type = $_POST[LogSearchConstant::CATEGORY_TYPE];
+        }
 
         if(isset($_POST['keyword'])) {
             $this->keyword = $_POST['keyword'];
@@ -87,6 +97,7 @@ class SearchModel {
         */
         $this->styleMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_STYLE);
         $this->areaMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_AREA);
+        $this->typeMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_TYPE);
 
     }
 }

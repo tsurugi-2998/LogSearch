@@ -14,6 +14,9 @@ class SummaryModel
     /** 山域 */
     public $areaName;
 
+    /** 種別名 */
+    public $typeName;
+
     /** 開始日  */
     public $startDate;
 

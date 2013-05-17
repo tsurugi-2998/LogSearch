@@ -27,6 +27,13 @@ class InitController extends LogSearchController
         $searchModel = new SearchModel();
         $searchModel->style = 'none';
         $searchModel->area = 'none';
+        if(!is_user_logged_in())
+        {
+            // ログインしていない場合、基本ステップのみ
+            $searchModel->type = 'kihon';
+        } else {
+            $searchModel->type = 'none';
+        }
         $searchModel->keyword = '';
         $searchModel->startDate = date('Y-m-d', strtotime('-1 month'));
         $searchModel->endDate = date('Y-m-d');
