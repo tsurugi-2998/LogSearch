@@ -15,22 +15,25 @@ use App\Helper\LogSearchHelper;
 class SearchModel {
 
     /** カテゴリー：登山スタイル */
-    public $styleMap;
+    public $styleArray;
     
     /** カテゴリー：山域 */
-    public $areaMap;
+    public $areaArray;
 
     /** カテゴリー：種別 */
-    public $typeMap;
+    public $typeArray;
 
-    /** 登山スタイル */
-    public $style;
-    
-    /** 山域 */
-    public $area;
+    public $styleId;
 
-    /** 種別 */
-    public $type;
+    public $styleName;
+
+    public $areaId;
+
+    public $areaName;
+
+    public $typeId;
+
+    public $typeName;
 
     /** キーワード */
     public $keyword;
@@ -52,16 +55,28 @@ class SearchModel {
 
     public function __construct()
     {
-        if(isset($_POST[LogSearchConstant::CATEGORY_STYLE])) {
-            $this->style = $_POST[LogSearchConstant::CATEGORY_STYLE];
+        if(isset($_POST['styleId'])) {
+            $this->styleId = $_POST['styleId'];
         }
 
-        if(isset($_POST[LogSearchConstant::CATEGORY_AREA])){
-            $this->area = $_POST[LogSearchConstant::CATEGORY_AREA];
-        } 
+        if(isset($_POST['styleName'])) {
+            $this->styleName = $_POST['styleName'];
+        }
+
+        if(isset($_POST['areaId'])) {
+            $this->areaId = $_POST['areaId'];
+        }
         
-        if(isset($_POST[LogSearchConstant::CATEGORY_TYPE])){
-            $this->type = $_POST[LogSearchConstant::CATEGORY_TYPE];
+        if(isset($_POST['areaName'])) {
+            $this->areaName = $_POST['areaName'];
+        }
+        
+        if(isset($_POST['typeId'])) {
+            $this->typeId = $_POST['typeId'];
+        }
+        
+        if(isset($_POST['typeName'])) {
+            $this->typeName = $_POST['typeName'];
         }
 
         if(isset($_POST['keyword'])) {
@@ -95,9 +110,9 @@ class SearchModel {
         /*
          * カスタム分類を取得
         */
-        $this->styleMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_STYLE);
-        $this->areaMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_AREA);
-        $this->typeMap = LogSearchHelper::getCategories(LogSearchConstant::CATEGORY_TYPE);
+        $this->styleArray = LogSearchHelper::getTaxonomyArray('style');
+        $this->areaArray = LogSearchHelper::getTaxonomyArray('area');
+        $this->typeArray = LogSearchHelper::getTaxonomyArray('type');
 
     }
 }

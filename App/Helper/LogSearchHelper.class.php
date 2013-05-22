@@ -2,6 +2,12 @@
 
 namespace App\Helper;
 
+require_once ABSPATH . '/FirePHPCore/FirePHP.class.php';
+require_once WP_PLUGIN_DIR . '/LogSearch/App/Model/TaxonomyModel.class.php';
+
+use \FirePHP;
+use App\Model\TaxonomyModel;
+
 /**
  * ユーティリティクラス
  * 
@@ -11,22 +17,76 @@ namespace App\Helper;
 class LogSearchHelper {
 
     /**
-     * カスタム分類を取得する
-     * @param unknown $taxonomy
+     * 取得したカテゴリ配列をTaxonomyModelに詰める
+     * 
+     * @param unknown $categories
+     * @return multitype:
      */
-    public static function getCategories($taxonomy)
+    public static function getTaxonomyArray($taxonomy)
     {
-
-        /*
-         * 登山スタイルのカスタム分類を取得
-        */
+        
+        $ret = array();
+        $taxonomyList = array();
+        
         $args = array(
                 'taxonomy' => $taxonomy,
-                'hide_empty' => 0,
+                'hide_empty' => 1,
                 'orderby ' => 'id',
         );
-        $catlists = get_categories( $args );
-        return LogSearchHelper::getCategoryMap($catlists);
+        $categories = get_categories( $args );
+
+        $firephp = FirePHP::getInstance(true);
+        $firephp->group('$categories');
+        $firephp->log($categories);
+        $firephp->groupEnd();
+
+        foreach ($categories as $category)
+        {
+            $termId = (string)($category->term_id);
+            $name = $category->name;
+            $parentId = (string)($category->parent);
+
+            if(isset($taxonomyList[$termId]))
+            {
+                $taxonomyModel = $taxonomyList[$termId];
+                $taxonomyModel->name = $name;
+            } else {
+                $taxonomyModel = new TaxonomyModel();
+                $taxonomyModel->termId = $termId;
+                $taxonomyModel->name = $name;
+                $taxonomyList[$termId] = $taxonomyModel;
+            }
+
+            if($parentId == 0)
+            {
+                array_push($ret, $taxonomyModel);
+                continue;
+            }
+
+            if(!isset($taxonomyList[$parentId]))
+            {
+                $parent = new TaxonomyModel();
+                $parent->termId = $parentId;
+                $parent->name = $name;
+                $parent->children = array($taxonomyModel);
+                $taxonomyList[$parentId] = $parent;
+            } else {
+                $parent = $taxonomyList[$parentId];
+                if(isset($parent->children))
+                {
+                    array_push($parent->children, $taxonomyModel);
+                } else {
+                    $parent->children = array($taxonomyModel);
+                }
+            }
+        }
+        
+        $firephp = FirePHP::getInstance(true);
+        $firephp->group('$ret');
+        $firephp->log($ret);
+        $firephp->groupEnd();
+
+        return $ret;
     }
 
     /**
@@ -44,38 +104,28 @@ class LogSearchHelper {
         return $category_map;
     }
 
-    /**
-     * カスタム分類を返す
-     *
-     * 検索条件と一致するカスタム分類がない場合、最も親であるカスタム分類を返す
-     *
-     * @param unknown $post
-     * @param unknown $taxonomy
-     * @param unknown $slug
-     * @return unknown
-     */
-    public static function getTaxonomyName($post, $taxonomy, $slug) 
+    public static function getTaxonomyName($post, $taxonomy)
     {
-        $name;
-        $parent;
+        $nameArray;
+        $parent = -1;
         $terms = get_the_terms(  $post -> ID ,$taxonomy );
+        
+        $firephp = FirePHP::getInstance(true);
+        $firephp->group('$terms');
+        $firephp->log($terms);
+        
         foreach ($terms as $term) {
-            $term_name = $term->name;
-            if($term->slug === $slug) {
-                return $term_name;
-            }
-
-            $term_parent = $term->parent;
-            if(!isset($name)) {
-                $name = $term_name;
-                $parent = $term_parent;
-                continue;
-            }
-
-            if($term_parent < $parent) {
-                $name = $term_name;
+            if($parent < $term->parent)
+            {
+                $parent = $term->parent;
+                $nameArray = array($term->name);
+            } else if($parent == $term->parent)
+            {
+                array_push($nameArray, $term->name);
             }
         }
+
+        $name = implode('・', $nameArray);
 
         return $name;
     }
@@ -102,7 +152,7 @@ class LogSearchHelper {
         if(!isset($category)) {
             return false;
         }
-        if($category != 'none' && $category != 'all') {
+        if($category != -1 && $category != 0) {
             return true;
         } else {
             return false;

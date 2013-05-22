@@ -15,12 +15,8 @@ class LogSearchConstant
     /** POST TYPE：山行記録 */
     const POST_TYPE_LOG = 'log';
 
-    /** カスタム分類：形態 */
-    const CATEGORY_STYLE = 'style';
-    /** カスタム分類：山域 */
-    const CATEGORY_AREA = 'area';
-    /** カスタム分類：種別 */
-    const CATEGORY_TYPE = 'type';
+    /** 種別：基本ステップ */
+    const TYPE_KIHON = 18;
 
     /** キーワードタイプ：本文*/
     const KEYWORD_TYPE_CONTENTS = '1';

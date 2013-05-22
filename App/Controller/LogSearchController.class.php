@@ -161,70 +161,47 @@ class LogSearchController
     protected function getCategoryCondition(SearchModel $searchModel) 
     {
         $this->firephp->log('getCategoryCondition start.');
+        $this->firephp->log($searchModel);
         $query = array();
         /*
          * カスタム分類が単数か複数かで引数がまったく違うためフラグ管理する
         */
-        $styleFlag = LogSearchHelper::isCategorySelected($searchModel->style);
-        $areaFlag = LogSearchHelper::isCategorySelected($searchModel->area);
-        $typeFlag = LogSearchHelper::isCategorySelected($searchModel->type);
+        $query['tax_query'] =
+        array(
+                'relation' => 'AND',
+        );
 
-        $flags = array(
-                $styleFlag,
-                $areaFlag,
-                $typeFlag
-                );
-        // 登山スタイルと山域の両方検索
-        if($this->isMultiple($flags)) {
-            $this->firephp->log('複数カテゴリ検索');
-
-            $query['tax_query'] =
-            array(
-                    'relation' => 'AND',
+        if(LogSearchHelper::isCategorySelected($searchModel->styleId))
+        {
+            $styleArray = array(
+                    'taxonomy' => 'style',
+                    'field' => 'id',
+                    'terms' => array($searchModel->styleId),
             );
-
-            if($styleFlag)
-            {
-                $styleArray = array(
-                        'taxonomy' => LogSearchConstant::CATEGORY_STYLE,
-                        'field' => 'slug',
-                        'terms' => array($searchModel->style),
-                );
-                array_push($query['tax_query'], $styleArray);
-            }
+            array_push($query['tax_query'], $styleArray);
+        }
 
 
-            if($areaFlag)
-            {
-                $areaArray = array(
-                        'taxonomy' => LogSearchConstant::CATEGORY_AREA,
-                        'field' => 'slug',
-                        'terms' => array($searchModel->area),
-                );
-                array_push($query['tax_query'], $areaArray);
-            }
+        if(LogSearchHelper::isCategorySelected($searchModel->areaId))
+        {
+            $areaArray = array(
+                    'taxonomy' => 'area',
+                    'field' => 'id',
+                    'terms' => array($searchModel->areaId),
+            );
+            array_push($query['tax_query'], $areaArray);
+        }
 
 
-            if($typeFlag)
-            {
-                $typeArray = array(
-                        'taxonomy' => LogSearchConstant::CATEGORY_TYPE,
-                        'field' => 'slug',
-                        'terms' => array($searchModel->type),
-                );
-            }
-
-            // 登山スタイルのみ
-        } else if($styleFlag) {
-            $this->firephp->log('登山スタイルのみ検索');
-            $query[LogSearchConstant::CATEGORY_STYLE] = $searchModel->style;
-            // 山域のみ
-        } else if($areaFlag) {
-            $this->firephp->log('山域のみ検索');
-            $query[LogSearchConstant::CATEGORY_AREA] = $searchModel->area;
-        } else if($typeFlag) {
-            $this->firephp->log('種別のみ検索');
-            $query[LogSearchConstant::CATEGORY_TYPE] = $searchModel->type;
+        if(LogSearchHelper::isCategorySelected($searchModel->typeId))
+        {
+            $typeArray = array(
+                    'taxonomy' => 'type',
+                    'field' => 'id',
+                    'terms' => array($searchModel->typeId),
+            );
+            
+            array_push($query['tax_query'], $typeArray);
         }
 
         $this->firephp->log('getCategoryCondition end.');
@@ -420,6 +397,11 @@ class LogSearchController
             */
 
             $customFields = get_post_custom($post->ID);
+
+            $this->firephp->group('$customFields');
+            $this->firephp->log($customFields);
+            $this->firephp->groupEnd();
+
             $this->firephp->group('Custom Fields.');
             $this->firephp->log($customFields);
             $this->firephp->groupEnd();
@@ -434,9 +416,9 @@ class LogSearchController
              * カスタム分類の取得
             */
             $logSearchHelper = new LogSearchHelper();
-            $styleName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_STYLE, $searchModel->style);
-            $areaName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_AREA, $searchModel->area);
-            $typeName = LogSearchHelper::getTaxonomyName($post, LogSearchConstant::CATEGORY_TYPE, $searchModel->type);
+            $styleName = LogSearchHelper::getTaxonomyName($post, 'style');
+            $areaName = LogSearchHelper::getTaxonomyName($post, 'area');
+            $typeName = LogSearchHelper::getTaxonomyName($post, 'type');
 
             /*
              * 基本的な投稿データの取得
