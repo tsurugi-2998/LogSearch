@@ -37,44 +37,41 @@ class SearchPanelView
                     <th>形態・山域<?php if(is_user_logged_in()){echo '・種別';}?>：</th>
                     <td>
                         <!-- 形態 -->
-                        <input type="hidden" id="styleId" name="styleId" value="<?php echo htmlspecialchars($searchModel->styleId); ?>">
-                        <input type="hidden" id="styleName" name="styleName" value="<?php echo htmlspecialchars($searchModel->styleName); ?>">
-                        <div id="style-btn-group" class="btn-group">
-                          <button id="style-label" class="btn btn-primary" data-value="-1" ><?php echo htmlspecialchars($searchModel->styleName); ?></button>
-                          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu">
-                              <li><a href="javascript:void(0)" style="text-decoration:none;" data-value="0" >全て</a></li>
-                              <?php $this->displayTaxonomy($searchModel->styleArray); ?>
-                          </ul>
-                        </div>
+                        <select name="styleId">
+                            <option value="-1" <?php if($searchModel->styleId == -1){ echo 'selected';}?>>▼形態</option>
+                            <option value="0" <?php if($searchModel->styleId == 0){ echo 'selected';}?>>全て</option>
+                            <?php foreach ($searchModel->styleArray as $style) : ?>
+                                <option value="<?php echo htmlspecialchars($style->termId); ?>" <?php if($searchModel->styleId == $style->termId){ echo 'selected';}?>><?php echo htmlspecialchars($style->name); ?></option>
+                            <?php endforeach;?>
+                        </select>
+                        <!-- 地方 -->
+                        <select id="region" name ="regionId">
+                            <option value="-1" <?php if($searchModel->regionId == -1){ echo 'selected';}?>>▼地方</option>
+                            <option value="0" <?php if($searchModel->regionId == 0){ echo 'selected';}?>>全て</option>
+                            <?php foreach ($searchModel->areaArray as $region) : ?>
+                              <option value="<?php echo htmlspecialchars($region->termId); ?>" <?php if($searchModel->regionId == $region->termId){ echo 'selected';}?>><?php echo htmlspecialchars($region->name); ?></option>
+                            <?php endforeach;?>
+                        </select>
                         <!-- 山域 -->
-                        <input type="hidden" id="areaId" name="areaId" value="<?php echo htmlspecialchars($searchModel->areaId); ?>">
-                        <input type="hidden" id="areaName" name="areaName" value="<?php echo htmlspecialchars($searchModel->areaName); ?>">
-                        <div id="area-btn-group" class="btn-group">
-                          <button id="area-label" class="btn btn-primary" data-value="-1" ><?php echo htmlspecialchars($searchModel->areaName); ?></button>
-                          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu">
-                              <li><a href="javascript:void(0)" style="text-decoration:none;" data-value="0" >全て</a></li>
-                              <?php $this->displayTaxonomy($searchModel->areaArray); ?>
-                          </ul>
-                        </div>
+                        <?php foreach ($searchModel->areaArray as $region) : ?>
+                          <?php if(isset($region->children)) : ?>
+                          <select id="<?php echo htmlspecialchars($region->termId); ?>" name="areaId" class="area" style="display: none;">
+                            <option value="-1" <?php if($searchModel->areaId == -1){ echo 'selected';}?>>▼山域</option>
+                            <option value="0" <?php if($searchModel->areaId == 0){ echo 'selected';}?>>全て</option>
+                            <?php foreach ($region->children as $area) : ?>
+                              <option value="<?php echo htmlspecialchars($area->termId); ?>" <?php if($searchModel->areaId == $area->termId){ echo 'selected';}?>><?php echo htmlspecialchars($area->name); ?></option>
+                            <?php endforeach;?>
+                          </select>
+                          <?php endif;?>
+                        <?php endforeach; ?>
                         <!-- 種別 -->
-                        <input type="hidden" id="typeId" name="typeId" value="<?php echo htmlspecialchars($searchModel->typeId); ?>">
-                        <input type="hidden" id="typeName" name="typeName" value="<?php echo htmlspecialchars($searchModel->typeName); ?>">
-                        <div id="type-btn-group" class="btn-group">
-                          <button id="type-label" class="btn btn-primary" data-value="-1" ><?php echo htmlspecialchars($searchModel->typeName); ?></button>
-                          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            <span class="caret"></span>    
-                          </button>
-                          <ul class="dropdown-menu">
-                              <li><a href="javascript:void(0)" style="text-decoration:none;" data-value="0" >全て</a></li>
-                              <?php $this->displayTaxonomy($searchModel->typeArray); ?>
-                          </ul>
-                        </div>
+                        <select name="typeId">
+                            <option value="-1" <?php if($searchModel->typeId == -1){ echo 'selected';}?>>▼種別</option>
+                            <option value="0" <?php if($searchModel->typeId == 0){ echo 'selected';}?>>全て</option>
+                            <?php foreach ($searchModel->typeArray as $type) : ?>
+                                <option value="<?php echo htmlspecialchars($type->termId); ?>" <?php if($searchModel->typeId == $type->termId){ echo 'selected';}?>><?php echo htmlspecialchars($type->name); ?></option>
+                            <?php endforeach;?>
+                        </select>
                     </td>
                 <tr>
                 <tr>

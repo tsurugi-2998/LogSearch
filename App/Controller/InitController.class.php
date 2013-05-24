@@ -25,11 +25,9 @@ class InitController extends LogSearchController
     public function execute()
     {
         $searchModel = new SearchModel();
-        $searchModel->styleName = '形態';
         $searchModel->styleId = -1;
-        $searchModel->areaName = '山域';
+        $searchModel->regionId = -1;
         $searchModel->areaId = -1;
-        $searchModel->typeName = '種別';
         if(!is_user_logged_in())
         {
             // ログインしていない場合、基本ステップのみ

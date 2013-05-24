@@ -77,33 +77,23 @@ function main($userAgent) {
             }
         );
 
-        $('#style-btn-group a').click(
-                function(){
-                	var $this = $(this);
-                	$('#style-label').text($this.text());
-                	$('#styleName').attr('value', $this.text());
-                	$('#styleId').attr('value', $this.attr('data-value'));
-                }
-            );
+        $('#region').ready(
+        		function(){
+        			var areaId = '#' + $('#region').val();
+        			$(areaId).css('display', 'inline');
+        		});
 
-        $('#area-btn-group a').click(
-            function(){
-            	var $this = $(this);
-            	$('#area-label').text($this.text());
-            	$('#areaName').attr('value', $this.text());
-            	$('#areaId').attr('value', $this.attr('data-value'));
-            }
+        $('#region').change(
+        		function(){
+        			var $this = $(this);
+        			$('.area').css('display', 'none');
+        			$('.area').attr('disabled', 'disabled ');
+        			var areaId = '#' + $this.val();
+        			$(areaId).css('display', 'inline');
+        			$(areaId).removeAttr('disabled');
+        			$(areaId).val(-1);
+        		}
         );
-
-        $('#type-btn-group a').click(
-                function(){
-                	var $this = $(this);
-                	$('#type-label').text($this.text());
-                	$('#typeName').attr('value', $this.text());
-                	$('#typeId').attr('value', $this.attr('data-value'));
-                }
-            );
-
         // ページネーション
         $('.pagi-nation').click(
             function(){

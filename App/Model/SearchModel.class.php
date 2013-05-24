@@ -25,15 +25,11 @@ class SearchModel {
 
     public $styleId;
 
-    public $styleName;
+    public $regionId;
 
     public $areaId;
 
-    public $areaName;
-
     public $typeId;
-
-    public $typeName;
 
     /** キーワード */
     public $keyword;
@@ -59,24 +55,16 @@ class SearchModel {
             $this->styleId = $_POST['styleId'];
         }
 
-        if(isset($_POST['styleName'])) {
-            $this->styleName = $_POST['styleName'];
+        if(isset($_POST['regionId'])) {
+            $this->regionId = $_POST['regionId'];
         }
 
         if(isset($_POST['areaId'])) {
             $this->areaId = $_POST['areaId'];
         }
-        
-        if(isset($_POST['areaName'])) {
-            $this->areaName = $_POST['areaName'];
-        }
-        
+
         if(isset($_POST['typeId'])) {
             $this->typeId = $_POST['typeId'];
-        }
-        
-        if(isset($_POST['typeName'])) {
-            $this->typeName = $_POST['typeName'];
         }
 
         if(isset($_POST['keyword'])) {

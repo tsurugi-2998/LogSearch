@@ -182,12 +182,20 @@ class LogSearchController
         }
 
 
-        if(LogSearchHelper::isCategorySelected($searchModel->areaId))
+        if(LogSearchHelper::isCategorySelected($searchModel->regionId))
         {
+            $areaId;
+            if(LogSearchHelper::isCategorySelected($searchModel->areaId))
+            {
+               $areaId =  $searchModel->areaId;
+            } else {
+               $areaId = $searchModel->regionId;
+            }
+
             $areaArray = array(
                     'taxonomy' => 'area',
                     'field' => 'id',
-                    'terms' => array($searchModel->areaId),
+                    'terms' => array($areaId),
             );
             array_push($query['tax_query'], $areaArray);
         }
