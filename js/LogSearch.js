@@ -94,6 +94,45 @@ function main($userAgent) {
         			$(areaId).val(-1);
         		}
         );
+
+        var container = $('div#errorMessageBox');
+
+        $("#log_search").validate({
+        	errorContainer: container,
+        	errorLabelContainer: $('ul', container),
+        	wrapper: "li", debug:true,
+        	focusInvalid: false,
+        	submitHandler: function(form) {form.submit();},
+        	rules: {
+        		keyword: {
+        			maxlength: 30
+        		},
+        		start_date: {
+        			term: 90
+        		}
+        	},
+        	messages: {
+        		keyword: {
+        			maxlength: 'キーワードは{0} 文字以内で入力してください。'
+        		},
+        		start_date: {
+        			term : '期間は{0}日以内で入力してください。'
+        		}
+        	}
+        });
+
+        $.validator.addMethod("term", function(value, element, params) {
+        	var from = new Date(value);
+        	var to =new Date($('#end_date').val());
+        	var term = params;
+        	var diff = (to.getTime()-from.getTime())/(1000*60*60*24);
+        	if(0 <= diff && diff <= term) {
+        		return true;
+        	} else {
+        		return false;
+        	}
+        });
+
         // ページネーション
         $('.pagi-nation').click(
             function(){

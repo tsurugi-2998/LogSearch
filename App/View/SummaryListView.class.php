@@ -26,11 +26,19 @@ class SummaryListView
         $firephp = FirePHP::getInstance(true);
         ob_start();
 ?>
+<div id="errorMessageBox" class="alert alert-error" style="display: none;">
+  <ul>
+    <li><label for="keyword" class="error"></label></li>
+    <li><label for="start_date" class="error"></label></li>
+  </ul>
+</div>
+<div class="alert alert-info">
 <?php if(!isset($summaryModelList) || count($summaryModelList) == 0) : ?>
-    <br/><strong>検索結果0件です</strong><br/>
+    検索結果0件です
 <?php else : ?>
-    <?php echo '<br/><strong>' . $foundPosts . '件ヒットしました</strong><br/>'; ?>
+    <?php echo $foundPosts . '件ヒットしました'; ?>
 <?php endif; ?>
+</div>
 <div id="result">
 <table id="summary-list">
     <thead>
