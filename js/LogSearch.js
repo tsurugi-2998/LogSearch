@@ -107,17 +107,17 @@ function main($userAgent) {
         		keyword: {
         			maxlength: 30
         		},
-        		start_date: {
-        			term: 90
-        		}
+//        		start_date: {
+//        			term: 90
+//        		}
         	},
         	messages: {
         		keyword: {
         			maxlength: 'キーワードは{0} 文字以内で入力してください。'
         		},
-        		start_date: {
-        			term : '期間は{0}日以内で入力してください。'
-        		}
+//        		start_date: {
+//        			term : '期間は{0}日以内で入力してください。'
+//        		}
         	}
         });
 

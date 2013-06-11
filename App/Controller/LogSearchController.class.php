@@ -457,7 +457,7 @@ class LogSearchController
             $summaryModel->postUrl =$postUrl;
             $summaryModel->dummyUrl = $dummyUrl;
             $summaryModel->postTitle = $postTitle;
-            $summaryModel->content = mb_substr(strip_tags($post->post_content), 0, LogSearchConstant::CONTENT_MAX_LENGTH) . '[・・・]';
+            $summaryModel->content = mb_substr(strip_tags($post->post_content), 0, LogSearchConstant::CONTENT_MAX_LENGTH) . '・・・';
             $summaryModel->member = $member;
             $summaryModel->postDate = $postDate;
             $summaryModel->isOpen = $open == 'true' ? true : false;

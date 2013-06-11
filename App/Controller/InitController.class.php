@@ -31,7 +31,7 @@ class InitController extends LogSearchController
         if(!is_user_logged_in())
         {
             // ログインしていない場合、基本ステップのみ
-            $searchModel->type = LogSearchConstant::TYPE_KIHON;
+            $searchModel->typeId = LogSearchConstant::TYPE_KIHON;
         } else {
             $searchModel->typeId = -1;
         }

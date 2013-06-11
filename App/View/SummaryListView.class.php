@@ -46,7 +46,7 @@ class SummaryListView
             <th>形態</th>
             <th>山域</th>
             <th>種別</th>
-            <th>実施日</th>
+            <th>日程</th>
             <th>記録</th>
             <th>画像</th>
             <th>記事</th>

@@ -65,6 +65,7 @@ class SearchPanelView
                           <?php endif;?>
                         <?php endforeach; ?>
                         <!-- 種別 -->
+                        <?php if(is_user_logged_in()) : ?>
                         <select name="typeId">
                             <option value="-1" <?php if($searchModel->typeId == -1){ echo 'selected';}?>>▼種別</option>
                             <option value="0" <?php if($searchModel->typeId == 0){ echo 'selected';}?>>全て</option>
@@ -72,6 +73,9 @@ class SearchPanelView
                                 <option value="<?php echo htmlspecialchars($type->termId); ?>" <?php if($searchModel->typeId == $type->termId){ echo 'selected';}?>><?php echo htmlspecialchars($type->name); ?></option>
                             <?php endforeach;?>
                         </select>
+                        <?php else : ?>
+                            <input type="hidden" name="typeId" value="<?php echo LogSearchConstant::TYPE_KIHON; ?>" />
+                        <?php endif; ?>
                     </td>
                 <tr>
                 <tr>
@@ -100,7 +104,7 @@ class SearchPanelView
                             <tbody>
                                 <tr>
                                     <td><input type="radio" id="date_run" name="date_type" value="1" <?php if($searchModel->dateType === "1"){ echo 'checked';} ?>></td>
-                                    <td><label for="date_run">山行実施日</label></td>
+                                    <td><label for="date_run">入山日</label></td>
                                     <td><input type="radio" id="date_post" name="date_type" value="2" <?php if($searchModel->dateType === "2"){ echo 'checked';} ?>></td>
                                     <td><label for="date_post">投稿日</label></td>
                                 </tr>
