@@ -37,6 +37,7 @@ class SummaryListView
     検索結果0件です
 <?php else : ?>
     <?php echo $foundPosts . '件ヒットしました'; ?>
+    <?php if(is_user_logged_in()){ echo '<br>※青色でハイライトされた山行記録はログイン状態の場合のみ表示されます'; }?>
 <?php endif; ?>
 </div>
 <div id="result">
@@ -107,7 +108,6 @@ class SummaryListView
         </tr>
     </tbody>
 </table>
-</div>
 <?php
         ob_end_flush();
     }
