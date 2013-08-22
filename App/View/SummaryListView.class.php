@@ -37,7 +37,6 @@ class SummaryListView
     検索結果0件です
 <?php else : ?>
     <?php echo $foundPosts . '件ヒットしました'; ?>
-    <?php if(is_user_logged_in()){ echo '<br>※青色でハイライトされた山行記録はログイン状態の場合のみ表示されます'; }?>
 <?php endif; ?>
 </div>
 <div id="result">
@@ -60,7 +59,7 @@ class SummaryListView
         foreach ($summaryModelList as $summaryModel) :
         $firephp->log($summaryModel, 'Summary Model.');
 ?>
-        <tr <?php if($summaryModel->isOpen != true){ echo "class=\"close-row\"";}?>>
+        <tr>
             <td>
                 <?php echo htmlspecialchars($summaryModel->styleName); ?>
             </td>
@@ -79,14 +78,22 @@ class SummaryListView
             <td>
                 <?php if(isset($summaryModel->dummyUrl)) : ?>
                     <img src="<?php echo htmlspecialchars($summaryModel->dummyUrl); ?>" alt="">
-                <?php else : ?>
+                <?php elseif($summaryModel->isOpen == true) : ?>
                     <a href="<?php echo $summaryModel->postUrl; ?>">
+                        <img class="thumbnail" src="<?php echo htmlspecialchars($summaryModel->thumbnailUrl); ?>" alt="">
+                    </a>
+                <?php else : ?>
+                    <a href="" onclick="return false" style="cursor:default;">
                         <img class="thumbnail" src="<?php echo htmlspecialchars($summaryModel->thumbnailUrl); ?>" alt="">
                     </a>
                 <?php  endif; ?>
             </td>
             <td class="title">
+              <?php if($summaryModel->isOpen == true) : ?>
                 <a class="content-popover" href="<?php echo $summaryModel->postUrl; ?>" data-title="<?php echo htmlspecialchars($summaryModel->postTitle); ?>" data-content="<?php echo htmlspecialchars($summaryModel->content); ?>" data-trigger="hover" data-placement="top"><?php echo htmlspecialchars($summaryModel->postTitle); ?></a>
+              <?php else : ?>
+                <?php echo htmlspecialchars($summaryModel->postTitle); ?>
+              <?php endif; ?>
             </td>
             <td>
                 <?php echo htmlspecialchars($summaryModel->postDate); ?>
