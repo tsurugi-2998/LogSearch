@@ -34,19 +34,11 @@ class SearchPanelView
         <table id="log-search-main">
             <tbody>
                 <tr>
-                    <th>形態・山域<?php if(is_user_logged_in()){echo '・種別';}?>：</th>
+                    <th>山域・種別・形態：</th>
                     <td>
-                        <!-- 形態 -->
-                        <select name="styleId">
-                            <option value="-1" <?php if($searchModel->styleId == -1){ echo 'selected';}?>>▼形態</option>
-                            <option value="0" <?php if($searchModel->styleId == 0){ echo 'selected';}?>>全て</option>
-                            <?php foreach ($searchModel->styleArray as $style) : ?>
-                                <option value="<?php echo htmlspecialchars($style->termId); ?>" <?php if($searchModel->styleId == $style->termId){ echo 'selected';}?>><?php echo htmlspecialchars($style->name); ?></option>
-                            <?php endforeach;?>
-                        </select>
                         <!-- 地方 -->
                         <select id="region" name ="regionId">
-                            <option value="-1" <?php if($searchModel->regionId == -1){ echo 'selected';}?>>▼地方</option>
+                            <option value="-1" <?php if($searchModel->regionId == -1){ echo 'selected';}?>>▼山域</option>
                             <option value="0" <?php if($searchModel->regionId == 0){ echo 'selected';}?>>全て</option>
                             <?php foreach ($searchModel->areaArray as $region) : ?>
                               <option value="<?php echo htmlspecialchars($region->termId); ?>" <?php if($searchModel->regionId == $region->termId){ echo 'selected';}?>><?php echo htmlspecialchars($region->name); ?></option>
@@ -65,7 +57,6 @@ class SearchPanelView
                           <?php endif;?>
                         <?php endforeach; ?>
                         <!-- 種別 -->
-                        <?php // if(is_user_logged_in()) : ?>
                         <select name="typeId">
                             <option value="-1" <?php if($searchModel->typeId == -1){ echo 'selected';}?>>▼種別</option>
                             <option value="0" <?php if($searchModel->typeId == 0){ echo 'selected';}?>>全て</option>
@@ -73,9 +64,14 @@ class SearchPanelView
                                 <option value="<?php echo htmlspecialchars($type->termId); ?>" <?php if($searchModel->typeId == $type->termId){ echo 'selected';}?>><?php echo htmlspecialchars($type->name); ?></option>
                             <?php endforeach;?>
                         </select>
-                        <?php // else : ?>
-                        <!--  <input type="hidden" name="typeId" value="<?php // echo LogSearchConstant::TYPE_KIHON; ?>" /> -->
-                        <?php // endif; ?>
+                        <!-- 形態 -->
+                        <select name="styleId">
+                            <option value="-1" <?php if($searchModel->styleId == -1){ echo 'selected';}?>>▼形態</option>
+                            <option value="0" <?php if($searchModel->styleId == 0){ echo 'selected';}?>>全て</option>
+                            <?php foreach ($searchModel->styleArray as $style) : ?>
+                                <option value="<?php echo htmlspecialchars($style->termId); ?>" <?php if($searchModel->styleId == $style->termId){ echo 'selected';}?>><?php echo htmlspecialchars($style->name); ?></option>
+                            <?php endforeach;?>
+                        </select>
                     </td>
                 <tr>
                 <tr>
@@ -89,8 +85,10 @@ class SearchPanelView
                                     <td><label for="keyword_content">本文</label></td>
                                     <td><input type="radio" id="keyword_member" name="keyword_type" value="2" <?php if($searchModel->keywordType === "2"){ echo 'checked';} ?>></td>
                                     <td><label for="keyword_member">メンバー</label></td>
-                                    <td><input type="radio" id="keyword_logger" name="keyword_type" value="3" <?php if($searchModel->keywordType === "3"){ echo 'checked';} ?>></td>
-                                    <td><label for="keyword_logger">記録者</label></td>
+<!-- 
+                                    <td><input type="radio" id="keyword_log" name="keyword_type" value="3" <?php if($searchModel->keywordType === "3"){ echo 'checked';} ?>></td>
+                                    <td><label for="keyword_log">山行名</label></td>
+ -->
                                 </tr>
                             </tbody>
                         </table>
@@ -104,7 +102,7 @@ class SearchPanelView
                             <tbody>
                                 <tr>
                                     <td><input type="radio" id="date_run" name="date_type" value="1" <?php if($searchModel->dateType === "1"){ echo 'checked';} ?>></td>
-                                    <td><label for="date_run">入山日</label></td>
+                                    <td><label for="date_run">日程</label></td>
                                     <td><input type="radio" id="date_post" name="date_type" value="2" <?php if($searchModel->dateType === "2"){ echo 'checked';} ?>></td>
                                     <td><label for="date_post">投稿日</label></td>
                                 </tr>

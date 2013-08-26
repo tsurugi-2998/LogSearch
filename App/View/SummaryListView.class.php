@@ -43,14 +43,13 @@ class SummaryListView
 <table id="summary-list">
     <thead>
         <tr>
-            <th>形態</th>
             <th>山域</th>
             <th>種別</th>
             <th>日程</th>
-            <th>記録</th>
-            <th>画像</th>
-            <th>記事</th>
-            <th>投稿日</th>
+            <th style="width:60px;">写真</th>
+            <th>リーダー</th>
+            <th>山行名</th>
+            <th>形態</th>
         </tr>
     </thead>
     <tbody>
@@ -60,9 +59,6 @@ class SummaryListView
 ?>
         <tr style="height: 50px;">
             <td>
-                <?php echo htmlspecialchars($summaryModel->styleName); ?>
-            </td>
-            <td>
                 <?php echo htmlspecialchars($summaryModel->areaName); ?>
             </td>
             <td>
@@ -71,10 +67,7 @@ class SummaryListView
             <td>
                 <?php echo date('Y年m月', strtotime($summaryModel->startDate)) ?>
             </td>
-            <td>
-                <label class="member-popover"  data-title="参加者" data-content="<?php echo htmlspecialchars($summaryModel->member); ?>" data-trigger="hover"><?php echo htmlspecialchars($summaryModel->logger); ?></label>
-            </td>
-            <td>
+            <td style="width:60px;">
                 <?php if(isset($summaryModel->dummyUrl)) : ?>
                     <img src="<?php echo htmlspecialchars($summaryModel->dummyUrl); ?>" alt="">
                 <?php elseif($summaryModel->isOpen == true) : ?>
@@ -87,6 +80,9 @@ class SummaryListView
                     </a>
                 <?php  endif; ?>
             </td>
+            <td>
+                <label class="member-popover"  data-title="参加者" data-content="<?php echo htmlspecialchars($summaryModel->member); ?>" data-trigger="hover"><?php echo htmlspecialchars($summaryModel->leader); ?></label>
+            </td>
             <td class="title">
               <?php if($summaryModel->isOpen == true || is_user_logged_in()) : ?>
                 <a class="content-popover" href="<?php echo $summaryModel->postUrl; ?>" data-title="<?php echo htmlspecialchars($summaryModel->postTitle); ?>" data-content="<?php echo htmlspecialchars($summaryModel->content); ?>" data-trigger="hover" data-placement="top"><?php echo htmlspecialchars($summaryModel->postTitle); ?></a>
@@ -95,7 +91,7 @@ class SummaryListView
               <?php endif; ?>
             </td>
             <td>
-                <?php echo htmlspecialchars($summaryModel->postDate); ?>
+                <?php echo htmlspecialchars($summaryModel->styleName); ?>
             </td>
         </tr>
 <?php 

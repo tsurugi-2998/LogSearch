@@ -296,7 +296,7 @@ class LogSearchController
             );
             
         } else if($searchModel->keywordType === LogSearchConstant::KEYWORD_TYPE_LOGGER) {
-            $this->firephp->log('記録者検索.');
+            $this->firephp->log('山行名検索.');
             // 記録者
             $query['meta_query'] = array(
                     array(
@@ -415,6 +415,7 @@ class LogSearchController
             $this->firephp->log($customFields);
             $this->firephp->groupEnd();
             $thumbnail = $customFields['thumbnail'][0];
+            $leader = $customFields['leader'][0];
             $logger = $customFields['logger'][0];
             $member = $customFields['member'][0];
             $startDate = $customFields['start_date'][0];
@@ -453,6 +454,7 @@ class LogSearchController
             $summaryModel->typeName = $typeName;
             $summaryModel->startDate = $startDate;
             $summaryModel->endDate = $endDate;
+            $summaryModel->leader = $leader;
             $summaryModel->logger = $logger;
             $summaryModel->thumbnailUrl = $thumbnailUrl;
             $summaryModel->postUrl =$postUrl;

@@ -23,6 +23,9 @@ class SummaryModel
     /** 終了日 */
     public $endDate;
 
+    /** リーダー */
+    public $leader;
+
     /** 記録 */
     public $logger;
 
