@@ -28,15 +28,17 @@ class InitController extends LogSearchController
         $searchModel->styleId = -1;
         $searchModel->regionId = -1;
         $searchModel->areaId = -1;
-        if(!is_user_logged_in())
-        {
-            // ログインしていない場合、基本ステップのみ
-            $searchModel->typeId = LogSearchConstant::TYPE_KIHON;
-        } else {
-            $searchModel->typeId = -1;
-        }
+//         if(!is_user_logged_in())
+//         {
+//             // ログインしていない場合、基本ステップのみ
+//             $searchModel->typeId = LogSearchConstant::TYPE_KIHON;
+//         } else {
+//             $searchModel->typeId = -1;
+//         }
+        $searchModel->typeId = -1;
         $searchModel->keyword = '';
-        $searchModel->startDate = date('Y-m-d', strtotime('-1 month'));
+        $searchModel->startDate = date('Y-m-d', strtotime('-1 year'));
+//        $searchModel->startDate = date('Y-01-01');
         $searchModel->endDate = date('Y-m-d');
         $searchModel->keywordType = LogSearchConstant::KEYWORD_TYPE_CONTENTS;
         $searchModel->dateType = LogSearchConstant::DATE_TYPE_POST;

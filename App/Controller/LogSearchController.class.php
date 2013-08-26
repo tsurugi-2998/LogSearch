@@ -135,15 +135,15 @@ class LogSearchController
         /* 検索条件：ソート */
         $query += $this->getSortCondition($searchModel);
         /* アクセス権限 一般公開 */
-        $openCondition = $this->getOpenCondition();
-        if(isset($query['meta_query']) && isset($openCondition['meta_query'])) 
-        {
-            foreach ($openCondition['meta_query'] as $condition) {
-                array_push($query['meta_query'], $condition);
-            }
-        } else {
-            $query += $openCondition;
-        }
+//         $openCondition = $this->getOpenCondition();
+//         if(isset($query['meta_query']) && isset($openCondition['meta_query'])) 
+//         {
+//             foreach ($openCondition['meta_query'] as $condition) {
+//                 array_push($query['meta_query'], $condition);
+//             }
+//         } else {
+//             $query += $openCondition;
+//         }
 
         /* ページ番号 */
         $query['paged'] = $searchModel->paged;
@@ -345,18 +345,18 @@ class LogSearchController
         $this->firephp->log('getSortCondition start.');
 
         $query = array();
-        if($searchModel->dateType === LogSearchConstant::DATE_TYPE_RUN) {
+//        if($searchModel->dateType === LogSearchConstant::DATE_TYPE_RUN) {
             $this->firephp->log('山行実施日でソート');
             // 山行実施日
             $query['orderby'] = 'meta_value';
             $query['meta_key'] = 'start_date';
             $query['order'] = 'DESC';
-        } else {
-            $this->firephp->log('投稿日でソート');
-            // それ以外は投稿日
-            $query['orderby'] = 'post_date';
-            $query['order'] = 'DESC';
-        }
+//         } else {
+//             $this->firephp->log('投稿日でソート');
+//             // それ以外は投稿日
+//             $query['orderby'] = 'post_date';
+//             $query['order'] = 'DESC';
+//         }
 
         $this->firephp->log('getSortCondition end.');
         return $query;
@@ -371,7 +371,8 @@ class LogSearchController
         {
             $fromDate = $_POST['start_date'];
         } else {
-            $fromDate = date('Y-m-d', strtotime('-1 month'));
+            $fromDate = date('Y-m-d', strtotime('-1 year'));
+            // $fromDate = date('Y-01-01');
         }
         
         if(isset($_POST['end_date']))

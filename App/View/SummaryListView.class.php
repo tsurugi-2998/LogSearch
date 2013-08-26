@@ -51,7 +51,6 @@ class SummaryListView
             <th>画像</th>
             <th>記事</th>
             <th>投稿日</th>
-            <th style="background-color: #FFFFFF;"></th>
         </tr>
     </thead>
     <tbody>
@@ -59,7 +58,7 @@ class SummaryListView
         foreach ($summaryModelList as $summaryModel) :
         $firephp->log($summaryModel, 'Summary Model.');
 ?>
-        <tr>
+        <tr style="height: 50px;">
             <td>
                 <?php echo htmlspecialchars($summaryModel->styleName); ?>
             </td>
@@ -89,7 +88,7 @@ class SummaryListView
                 <?php  endif; ?>
             </td>
             <td class="title">
-              <?php if($summaryModel->isOpen == true) : ?>
+              <?php if($summaryModel->isOpen == true || is_user_logged_in()) : ?>
                 <a class="content-popover" href="<?php echo $summaryModel->postUrl; ?>" data-title="<?php echo htmlspecialchars($summaryModel->postTitle); ?>" data-content="<?php echo htmlspecialchars($summaryModel->content); ?>" data-trigger="hover" data-placement="top"><?php echo htmlspecialchars($summaryModel->postTitle); ?></a>
               <?php else : ?>
                 <?php echo htmlspecialchars($summaryModel->postTitle); ?>
@@ -98,21 +97,10 @@ class SummaryListView
             <td>
                 <?php echo htmlspecialchars($summaryModel->postDate); ?>
             </td>
-            <td style="background-color: #FFFFFF;"><img class="dummy" src="<?php echo htmlspecialchars(site_url() . LogSearchConstant::DUMMY_GIF); ?>" alt="" style="background-color: #FFFFFF;"></td>
         </tr>
 <?php 
         endforeach;
 ?>
-        <tr style="background-color: #FFFFFF;">
-            <td style="background-color: #FFFFFF;"></td>
-            <td style="background-color: #FFFFFF;"></td>
-            <td style="background-color: #FFFFFF;"></td>
-            <td style="background-color: #FFFFFF;"></td>
-            <td style="background-color: #FFFFFF;"><img class="dummy" src="<?php echo htmlspecialchars(site_url() . LogSearchConstant::DUMMY_GIF); ?>" alt="" style="background-color: #FFFFFF;"></td>
-            <td style="background-color: #FFFFFF;"></td>
-            <td style="background-color: #FFFFFF;"></td>
-            <td style="background-color: #FFFFFF;"><img class="dummy" src="<?php echo htmlspecialchars(site_url() . LogSearchConstant::DUMMY_GIF); ?>" alt="" style="background-color: #FFFFFF;"></td>
-        </tr>
     </tbody>
 </table>
 <?php

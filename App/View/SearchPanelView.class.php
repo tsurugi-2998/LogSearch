@@ -55,9 +55,9 @@ class SearchPanelView
                         <!-- 山域 -->
                         <?php foreach ($searchModel->areaArray as $region) : ?>
                           <?php if(isset($region->children)) : ?>
-                          <select id="<?php echo htmlspecialchars($region->termId); ?>" name="areaId" class="area" style="display: none;">
-                            <option value="-1" <?php if($searchModel->areaId == -1){ echo 'selected';}?>>▼山域</option>
-                            <option value="0" <?php if($searchModel->areaId == 0){ echo 'selected';}?>>全て</option>
+                          <select id="<?php echo htmlspecialchars($region->termId); ?>" name="areaId" class="area" <?php if($searchModel->regionId != $region->termId) : ?> style="display: none;" disabled="disabled" <?php endif;?>>>
+                            <option value="-1" <?php if($searchModel->areaId == -1 && $searchModel->regionId == $region->termId){ echo 'selected';}?>>▼山域</option>
+                            <option value="0" <?php if($searchModel->areaId == 0 && $searchModel->regionId == $region->termId){ echo 'selected';}?>>全て</option>
                             <?php foreach ($region->children as $area) : ?>
                               <option value="<?php echo htmlspecialchars($area->termId); ?>" <?php if($searchModel->areaId == $area->termId){ echo 'selected';}?>><?php echo htmlspecialchars($area->name); ?></option>
                             <?php endforeach;?>
@@ -65,7 +65,7 @@ class SearchPanelView
                           <?php endif;?>
                         <?php endforeach; ?>
                         <!-- 種別 -->
-                        <?php if(is_user_logged_in()) : ?>
+                        <?php // if(is_user_logged_in()) : ?>
                         <select name="typeId">
                             <option value="-1" <?php if($searchModel->typeId == -1){ echo 'selected';}?>>▼種別</option>
                             <option value="0" <?php if($searchModel->typeId == 0){ echo 'selected';}?>>全て</option>
@@ -73,9 +73,9 @@ class SearchPanelView
                                 <option value="<?php echo htmlspecialchars($type->termId); ?>" <?php if($searchModel->typeId == $type->termId){ echo 'selected';}?>><?php echo htmlspecialchars($type->name); ?></option>
                             <?php endforeach;?>
                         </select>
-                        <?php else : ?>
-                            <input type="hidden" name="typeId" value="<?php echo LogSearchConstant::TYPE_KIHON; ?>" />
-                        <?php endif; ?>
+                        <?php // else : ?>
+                        <!--  <input type="hidden" name="typeId" value="<?php // echo LogSearchConstant::TYPE_KIHON; ?>" /> -->
+                        <?php // endif; ?>
                     </td>
                 <tr>
                 <tr>
