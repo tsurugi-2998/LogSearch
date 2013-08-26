@@ -144,7 +144,7 @@ function main($userAgent) {
             }
         );
 
-        $('.content-popover').popover();
+//        $('.content-popover').popover();
 
         $('.member-popover').popover();
     });
